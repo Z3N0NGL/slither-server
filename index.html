@@ -6,517 +6,51 @@
     <title>Slither.io - Z3N0 Edition</title>
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #13131a;
-            --bg-card: #1a1a24;
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0b0;
-            --accent: #7289da;
-            --accent-hover: #5b6eae;
-            --danger: #ff4444;
-            --success: #44ff44;
-            --warning: #ffaa00;
-            --border: #2a2a3a;
-            --glow: rgba(114, 137, 218, 0.3);
+            --bg: #0a0a1a; --card: #1a1a24; --accent: #7289da;
+            --danger: #ff4444; --success: #44ff44; --border: #2a2a3a;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        .screen {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: opacity 0.3s;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .login-container {
-            text-align: center;
-            z-index: 10;
-        }
-
-        .logo h1 {
-            font-size: 72px;
-            font-weight: 800;
-            letter-spacing: -2px;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #7289da, #44ff44);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 10px rgba(114, 137, 218, 0.5)); }
-            to { filter: drop-shadow(0 0 30px rgba(68, 255, 68, 0.5)); }
-        }
-
-        .accent {
-            color: #44ff44;
-        }
-
-        .subtitle {
-            font-size: 18px;
-            color: var(--text-secondary);
-            letter-spacing: 8px;
-            margin-bottom: 40px;
-        }
-
-        .login-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(20px);
-            min-width: 400px;
-        }
-
-        .login-card h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .login-card p {
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-        }
-
-        .discord-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s;
-            font-weight: 600;
-            width: 100%;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-
-        .discord-btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px var(--glow);
-        }
-
-        .discord-icon {
-            width: 24px;
-            height: 24px;
-        }
-
-        .unlink-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            display: none;
-            transition: all 0.3s;
-        }
-
-        .unlink-btn:hover {
-            background: #ff2222;
-        }
-
-        #login-status {
-            margin-top: 15px;
-            font-weight: 600;
-        }
-
-        #game-screen {
-            position: relative;
-            background: #000;
-        }
-
-        #game-canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        #game-header {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-            z-index: 100;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-        }
-
-        .player-info, .score-display {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .score-label {
-            color: var(--text-secondary);
-        }
-
-        #score-value {
-            font-weight: 700;
-            font-size: 20px;
-            color: var(--accent);
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            transition: background 0.3s;
-            color: white;
-        }
-
-        .icon-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .panel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(19, 19, 26, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 25px;
-            min-width: 350px;
-            max-height: 70vh;
-            overflow-y: auto;
-            z-index: 200;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-
-        .panel h3 {
-            margin-bottom: 20px;
-            font-size: 22px;
-        }
-
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        select, input[type="number"], input[type="text"] {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 8px 12px;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        select:focus, input:focus {
-            border-color: var(--accent);
-        }
-
-        input[type="range"] {
-            width: 100px;
-        }
-
-        .btn-secondary, .btn-admin {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 15px;
-            width: 100%;
-        }
-
-        .btn-admin {
-            background: var(--accent);
-            border: none;
-            color: white;
-            margin-top: 5px;
-        }
-
-        .btn-admin:hover {
-            background: var(--accent-hover);
-        }
-
-        #leaderboard-list {
-            list-style: none;
-            counter-reset: leaderboard;
-        }
-
-        #leaderboard-list li {
-            padding: 10px;
-            margin: 5px 0;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #leaderboard-list li::before {
-            counter-increment: leaderboard;
-            content: counter(leaderboard) ".";
-            margin-right: 10px;
-            font-weight: bold;
-            color: var(--accent);
-        }
-
-        .admin-tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 20px;
-        }
-
-        .admin-tab {
-            flex: 1;
-            padding: 10px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            cursor: pointer;
-            border-radius: 8px 8px 0 0;
-            transition: all 0.3s;
-        }
-
-        .admin-tab.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-        }
-
-        .admin-tab-content {
-            display: none;
-        }
-
-        .admin-tab-content.active {
-            display: block;
-        }
-
-        .player-entry {
-            background: var(--bg-secondary);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid transparent;
-        }
-
-        .player-entry:hover {
-            border-color: var(--accent);
-            background: rgba(114, 137, 218, 0.1);
-        }
-
-        .player-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .player-actions {
-            display: flex;
-            gap: 5px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .action-btn.teleport { background: #4a90d9; color: white; }
-        .action-btn.bring { background: #9b59b6; color: white; }
-        .action-btn.kick { background: var(--warning); color: black; }
-        .action-btn.kill { background: var(--danger); color: white; }
-        .action-btn.size { background: var(--success); color: black; }
-
-        .action-btn:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-        }
-
-        .admin-feature {
-            padding: 12px;
-            background: var(--bg-secondary);
-            margin: 8px 0;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tag-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: var(--bg-secondary);
-            margin: 8px 0;
-            border-radius: 10px;
-        }
-
-        .tag-color-input {
-            width: 40px;
-            height: 30px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        #death-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 150;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        #death-overlay.visible {
-            opacity: 1;
-        }
-
-        .death-text {
-            font-size: 48px;
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 0 30px rgba(255,0,0,0.8);
-        }
-
-        #notification {
-            position: absolute;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-card);
-            border: 1px solid var(--accent);
-            padding: 10px 25px;
-            border-radius: 30px;
-            z-index: 300;
-            opacity: 0;
-            transition: opacity 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        #notification.show {
-            opacity: 1;
-        }
-
-        #fps-counter {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-        }
-
-        #settings-btn {
-            position: absolute;
-            top: 20px;
-            right: 100px;
-            background: rgba(0,0,0,0.7);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .welcome-back {
-            margin-top: 15px;
-            padding: 10px;
-            background: rgba(68, 255, 68, 0.1);
-            border-radius: 8px;
-            border: 1px solid rgba(68, 255, 68, 0.3);
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#000; overflow:hidden; font-family:'Segoe UI',Arial; color:#fff; user-select:none; }
+        .screen { width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; position:absolute; top:0; left:0; background:linear-gradient(135deg,#0a0a1a,#1a1a2e); }
+        .hidden { display:none !important; }
+        .login-container { text-align:center; }
+        .logo h1 { font-size:4rem; font-weight:800; background:linear-gradient(135deg,#7289da,#44ff44); -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:glow 2s infinite alternate; }
+        @keyframes glow { from{filter:drop-shadow(0 0 10px rgba(114,137,218,0.5));} to{filter:drop-shadow(0 0 30px rgba(68,255,68,0.5));} }
+        .login-card { background:var(--card); border-radius:20px; padding:2.5rem; min-width:350px; border:1px solid var(--border); backdrop-filter:blur(20px); }
+        .discord-btn { width:100%; padding:1rem; background:var(--accent); border:none; color:#fff; font-size:1.2rem; border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600; margin-bottom:10px; }
+        .discord-btn:hover { filter:brightness(1.2); }
+        .unlink-btn { background:var(--danger); }
+        #game-canvas { position:absolute; top:0; left:0; }
+        .ui-panel { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(19,19,26,0.95); border:1px solid var(--border); border-radius:16px; padding:20px; min-width:300px; max-height:70vh; overflow-y:auto; z-index:200; }
+        .admin-tabs { display:flex; gap:5px; margin-bottom:1rem; }
+        .admin-tab { flex:1; padding:8px; background:#1a1a24; border:1px solid var(--border); color:#fff; border-radius:8px 8px 0 0; cursor:pointer; }
+        .admin-tab.active { background:var(--accent); border-color:var(--accent); }
+        .admin-tab-content { display:none; }
+        .admin-tab-content.active { display:block; }
+        .action-btn { padding:5px 10px; border-radius:6px; border:none; cursor:pointer; font-size:0.8rem; margin:2px; color:#fff; }
+        .action-btn.tp{background:#4a90d9} .action-btn.br{background:#9b59b6}
+        .action-btn.kk{background:#ffaa00;color:#000} .action-btn.kl{background:#ff4444}
+        .action-btn.sz{background:#44ff44;color:#000}
+        #fps { position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.7); padding:5px 15px; border-radius:20px; font-size:0.9rem; z-index:100; }
+        #death { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,0,0,0.2); display:flex; align-items:center; justify-content:center; z-index:150; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+        #death.visible { opacity:1; }
+        #death span { font-size:4rem; font-weight:800; text-shadow:0 0 30px rgba(255,0,0,0.8); }
+        #notif { position:absolute; top:100px; left:50%; transform:translateX(-50%); background:#1a1a24; padding:10px 25px; border-radius:30px; z-index:300; opacity:0; transition:opacity 0.3s; }
+        #notif.show { opacity:1; }
+        .feature-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
     </style>
 </head>
 <body>
     <div id="login-screen" class="screen">
         <div class="login-container">
-            <div class="logo">
-                <h1>🐍 SLITHER<span class="accent">.IO</span></h1>
-                <p class="subtitle">Z3N0 EDITION</p>
-            </div>
+            <div class="logo"><h1>🐍 SLITHER<span style="color:#44ff44">.IO</span></h1></div>
             <div class="login-card">
-                <h2>Welcome Back</h2>
-                <p>Login with Discord to continue</p>
-                <button id="discord-login-btn" class="discord-btn">
-                    <svg class="discord-icon" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-                    </svg>
+                <h2>Login with Discord</h2>
+                <button id="login-btn" class="discord-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
                     Login with Discord
                 </button>
-                <button id="unlink-btn" class="unlink-btn">🔗 Unlink Discord Account</button>
+                <button id="unlink-btn" class="discord-btn unlink-btn">Unlink Account</button>
                 <div id="login-status"></div>
             </div>
         </div>
@@ -524,810 +58,429 @@
 
     <div id="game-screen" class="screen hidden">
         <canvas id="game-canvas"></canvas>
-        
-        <div id="game-header">
-            <div class="player-info">
-                <span id="player-name-display">Player</span>
-            </div>
-            <div class="score-display">
-                <span class="score-label">Score:</span>
-                <span id="score-value">0</span>
-            </div>
-            <button id="leaderboard-toggle" class="icon-btn" title="Leaderboard">🏆</button>
-            <button id="admin-toggle" class="icon-btn" title="Z3N0 Client">⚡</button>
+        <div style="position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;gap:20px;z-index:100;background:rgba(0,0,0,0.7);padding:8px 20px;border-radius:30px;">
+            <span id="pname">Player</span>
+            <span>Score: <span id="score">0</span></span>
+            <button id="lb-btn" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">🏆</button>
+            <button id="admin-btn" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">⚡</button>
         </div>
+        <div id="fps">60 FPS</div>
+        <div id="death"><span>YOU DIED</span></div>
+        <div id="notif"></div>
 
-        <button id="settings-btn">⚙️ Settings</button>
-        <div id="fps-counter">60 FPS</div>
-
-        <div id="settings-panel" class="panel hidden">
+        <!-- Settings -->
+        <div id="settings-panel" class="ui-panel hidden">
             <h3>⚙️ Settings</h3>
-            <div class="setting-item">
-                <label>Movement Mode:</label>
-                <select id="movement-mode">
-                    <option value="mouse">🖱️ Mouse</option>
-                    <option value="wasd">⌨️ WASD</option>
-                </select>
-            </div>
-            <div class="setting-item">
-                <label>Graphics Quality:</label>
-                <select id="graphics-quality">
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
-            <div class="setting-item">
-                <label>Show FPS:</label>
-                <input type="checkbox" id="show-fps" checked>
-            </div>
-            <button id="close-settings" class="btn-secondary">Close</button>
+            <div class="feature-row"><label>Movement:</label> <select id="movement"><option value="mouse">Mouse</option><option value="wasd">WASD</option></select></div>
+            <div class="feature-row"><label>Quality:</label> <select id="quality"><option value="high">High</option><option value="low">Low</option></select></div>
+            <button id="close-settings" style="width:100%;margin-top:10px;">Close</button>
         </div>
 
-        <div id="leaderboard-panel" class="panel hidden">
+        <!-- Leaderboard -->
+        <div id="lb-panel" class="ui-panel hidden">
             <h3>🏆 Leaderboard</h3>
-            <ol id="leaderboard-list"></ol>
-            <button id="close-leaderboard" class="btn-secondary">Close</button>
+            <ol id="lb-list"></ol>
+            <button id="close-lb" style="width:100%;margin-top:10px;">Close</button>
         </div>
 
-        <div id="admin-panel" class="panel hidden" style="max-width: 450px;">
+        <!-- Z3N0 Admin Panel -->
+        <div id="admin-panel" class="ui-panel hidden" style="max-width:450px;">
             <div class="admin-tabs">
                 <button class="admin-tab active" data-tab="players">👥 Players</button>
                 <button class="admin-tab" data-tab="local">🔧 Local</button>
                 <button class="admin-tab" data-tab="cosmetics">🎨 Cosmetics</button>
             </div>
-            
+
+            <!-- Players tab -->
             <div id="admin-players" class="admin-tab-content active">
                 <h3>Connected Players</h3>
-                <div id="players-list-admin"></div>
+                <div id="player-list"></div>
             </div>
-            
+
+            <!-- Local tab -->
             <div id="admin-local" class="admin-tab-content hidden">
                 <h3>Local Features</h3>
-                <div class="admin-feature">
-                    <label>Speed Multiplier:</label>
-                    <div>
-                        <input type="range" id="speed-multiplier" min="1" max="10" value="1" step="0.1">
-                        <span id="speed-value">1x</span>
-                    </div>
-                </div>
-                <div class="admin-feature">
-                    <label>ESP:</label>
-                    <input type="checkbox" id="esp-toggle">
-                </div>
-                <div class="admin-feature">
-                    <label>3D View:</label>
-                    <input type="checkbox" id="3d-view-toggle">
-                </div>
-                <div class="admin-feature">
-                    <label>Anti-Kill (God Mode):</label>
-                    <input type="checkbox" id="anti-kill-toggle">
-                </div>
-                <div class="admin-feature">
-                    <label>Give Size:</label>
-                    <input type="number" id="give-size-input" value="100" min="1" style="width: 80px;">
-                    <button id="give-size-btn" class="btn-admin">Apply</button>
-                </div>
+                <div class="feature-row"><label>Speed Multiplier:</label> <input type="range" id="speed" min="1" max="10" step="0.5" value="1"> <span id="speed-val">1x</span></div>
+                <div class="feature-row"><label>ESP:</label> <input type="checkbox" id="esp"></div>
+                <div class="feature-row"><label>3D View:</label> <input type="checkbox" id="3dview"></div>
+                <div class="feature-row"><label>God Mode (Anti-Kill):</label> <input type="checkbox" id="god"></div>
+                <div class="feature-row"><label>Give Self Size:</label> <input type="number" id="self-size" value="10" min="1" style="width:60px;"> <button id="giveself" class="action-btn sz">Apply</button></div>
             </div>
-            
+
+            <!-- Cosmetics tab -->
             <div id="admin-cosmetics" class="admin-tab-content hidden">
                 <h3>Tag Management</h3>
-                <div class="tag-item">
-                    <span>Z3N0 Tag</span>
-                    <div>
-                        <input type="color" class="tag-color-input" value="#ff4444" data-tag="Z3N0">
-                        <button class="btn-admin apply-tag" data-tag="Z3N0" style="width: auto; margin-left: 5px;">Apply</button>
-                    </div>
-                </div>
-                <div class="tag-item">
-                    <span>Quad Tag</span>
-                    <div>
-                        <input type="color" class="tag-color-input" value="#44ff44" data-tag="Quad">
-                        <button class="btn-admin apply-tag" data-tag="Quad" style="width: auto; margin-left: 5px;">Apply</button>
-                    </div>
-                </div>
-                <div class="tag-item">
-                    <span>Shadow Tag</span>
-                    <div>
-                        <input type="color" class="tag-color-input" value="#9b59b6" data-tag="Shadow">
-                        <button class="btn-admin apply-tag" data-tag="Shadow" style="width: auto; margin-left: 5px;">Apply</button>
-                    </div>
-                </div>
-                <div class="tag-item">
-                    <span>Pingio Tag</span>
-                    <div>
-                        <input type="color" class="tag-color-input" value="#ffaa00" data-tag="Pingio">
-                        <button class="btn-admin apply-tag" data-tag="Pingio" style="width: auto; margin-left: 5px;">Apply</button>
-                    </div>
-                </div>
-                <div class="admin-feature" style="flex-direction: column; align-items: flex-start;">
-                    <label>Custom Tag Name:</label>
-                    <div style="display: flex; gap: 5px; width: 100%; margin-top: 5px;">
-                        <input type="text" id="custom-tag-name" placeholder="Tag name" style="flex: 1;">
-                        <input type="color" id="custom-tag-color" value="#ffffff">
-                        <button id="apply-custom-tag" class="btn-admin" style="width: auto;">Apply</button>
+                <div class="feature-row"><span>Z3N0</span> <div><input type="color" id="tag-z3n0" value="#ff4444"> <button class="apply-tag" data-tag="Z3N0">Apply</button></div></div>
+                <div class="feature-row"><span>Quad</span> <div><input type="color" id="tag-quad" value="#44ff44"> <button class="apply-tag" data-tag="Quad">Apply</button></div></div>
+                <div class="feature-row"><span>Shadow</span> <div><input type="color" id="tag-shadow" value="#9b59b6"> <button class="apply-tag" data-tag="Shadow">Apply</button></div></div>
+                <div class="feature-row"><span>Pingio</span> <div><input type="color" id="tag-pingio" value="#ffaa00"> <button class="apply-tag" data-tag="Pingio">Apply</button></div></div>
+                <div class="feature-row" style="flex-direction:column;align-items:flex-start;">
+                    <label>Custom Tag:</label>
+                    <div style="display:flex;gap:5px;width:100%;">
+                        <input type="text" id="custom-tag" placeholder="Tag name" style="flex:1;">
+                        <input type="color" id="custom-color" value="#ffffff">
+                        <button id="apply-custom">Apply</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div id="death-overlay">
-            <div class="death-text">YOU DIED</div>
-        </div>
-        <div id="notification"></div>
     </div>
 
     <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
-    <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
-    <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script>
-        // ==================== CONFIGURATION ====================
-        const DISCORD_CLIENT_ID = '1521216585292058734'; // Replace with your Discord app Client ID
-        const DISCORD_REDIRECT_URI = 'https://pingioo.netlify.app'; // Replace with your itch.io URL
-        
-        const CONFIG = {
-            SERVER_URL: 'https://slither-game-server-ultm.onrender.com',
-            WORLD_WIDTH: 5000,
-            WORLD_HEIGHT: 5000,
-            BORDER_SIZE: 20,
-            GRID_SIZE: 100
-        };
+        // ==================== CONFIG ====================
+        const DISCORD_CLIENT_ID = '1521216585292058734';
+        const REDIRECT_URI = 'https://pingioo.netlify.app';
+        const PLAYFAB_TITLE = '10C130';
+        const SERVER = 'https://slither-game-server-ultm.onrender.com';
+        const WORLD_W = 5000, WORLD_H = 5000, BORDER = 20;
 
         // ==================== STATE ====================
-        let socket = null;
-        let playerId = null;
-        let playerName = 'Player';
-        let gamePlayers = [];
-        let hasZ3N0Tag = false;
-        let playfabReady = false;
-        let gameOrbs = [];
-        let worldWidth = CONFIG.WORLD_WIDTH;
-        let worldHeight = CONFIG.WORLD_HEIGHT;
-        let mouseX = 0;
-        let mouseY = 0;
-        let cameraX = 0;
-        // Break out of iframe
-        if (window.top !== window.self) {
-            window.top.location.href = window.self.location.href;
-        }
-        let cameraY = 0;
-        let movementMode = 'mouse';
-        let keysPressed = {};
-        let isBoosting = false;
-        let fps = 60;
-        let lastFrameTime = performance.now();
-        let frameCount = 0;
-        let showFPS = true;
-        let adminFeatures = {
-            speedMultiplier: 1,
-            esp: false,
-            view3D: false,
-            antiKill: false
-        };
+        let socket, playerId, playerName = 'Player';
+        let players = [], orbs = [];
+        let mouseX = 0, mouseY = 0, camX = 0, camY = 0;
+        let movement = 'mouse', keys = {}, boosting = false;
+        let fps = 0, lastTime = 0, frames = 0;
+        let admin = { speed: 1, esp: false, view3D: false, god: false };
+        let hasZ3N0 = false, playfabReady = false;
 
-        // ==================== DOM ELEMENTS ====================
-        const loginScreen = document.getElementById('login-screen');
-        const gameScreen = document.getElementById('game-screen');
+        // DOM
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
-        const scoreValue = document.getElementById('score-value');
-        const playerNameDisplay = document.getElementById('player-name-display');
-        const fpsCounter = document.getElementById('fps-counter');
-        const deathOverlay = document.getElementById('death-overlay');
-        const notification = document.getElementById('notification');
-        const leaderboardList = document.getElementById('leaderboard-list');
-        const playersListAdmin = document.getElementById('players-list-admin');
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        const loginScreen = document.getElementById('login-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const scoreEl = document.getElementById('score');
+        const nameEl = document.getElementById('pname');
+        const fpsEl = document.getElementById('fps');
+        const deathEl = document.getElementById('death');
+        const notif = document.getElementById('notif');
+        const lbList = document.getElementById('lb-list');
+        const playerListEl = document.getElementById('player-list');
         const loginStatus = document.getElementById('login-status');
         const unlinkBtn = document.getElementById('unlink-btn');
 
-        // ==================== CANVAS SETUP ====================
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // ==================== DISCORD OAUTH ====================
-        function checkDiscordLogin() {
+        // ==================== DISCORD AUTH ====================
+        function checkLogin() {
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
-            const accessToken = params.get("access_token");
-            const savedUser = localStorage.getItem("discord_user");
-            if (savedUser) {
-                const user = JSON.parse(savedUser);
+            const token = params.get('access_token');
+            const saved = localStorage.getItem('discord_user');
+            if (saved) {
+                const user = JSON.parse(saved);
                 playerName = user.username;
-                showLoggedInState(user);
-            } else if (accessToken) {
-                fetch("https://discord.com/api/users/@me", {
-                    headers: { Authorization: "Bearer " + accessToken }
-                }).then(r => r.json()).then(user => {
-                    localStorage.setItem("discord_user", JSON.stringify(user));
-                    playerName = user.username;
-                    window.location.hash = "";
-                    showLoggedInState(user);
-                }).catch(() => {
-                    loginStatus.textContent = "Login failed";
-                });
-            }
-        }
-
-        function initPlayFab(user) {            if (typeof PlayFab === "undefined") return;            PlayFab.settings.titleId = CONFIG.PLAYFAB_TITLE_ID;            PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {                console.log("PlayFab logged in");                playfabReady = true;                PlayFabClientAPI.GetUserData({ Keys: ["tag"] }, (data, err) => {                    if (data && data.Data && data.Data.tag && data.Data.tag.Value === "Z3N0") {                        hasZ3N0Tag = true;                    }                });            });        }
-
-        function initPlayFab(user) {            if (typeof PlayFab === "undefined") return;            PlayFab.settings.titleId = CONFIG.PLAYFAB_TITLE_ID;            PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {                console.log("PlayFab logged in");                playfabReady = true;                PlayFabClientAPI.GetUserData({ Keys: ["tag"] }, (data, err) => {                    if (data && data.Data && data.Data.tag && data.Data.tag.Value === "Z3N0") {                        hasZ3N0Tag = true;                    }                });            });        }
-
-        function initPlayFab(user) {            if (typeof PlayFab === "undefined") return;            PlayFab.settings.titleId = CONFIG.PLAYFAB_TITLE_ID;            PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {                console.log("PlayFab logged in");                playfabReady = true;                PlayFabClientAPI.GetUserData({ Keys: ["tag"] }, (data, err) => {                    if (data && data.Data && data.Data.tag && data.Data.tag.Value === "Z3N0") {                        hasZ3N0Tag = true;                        console.log("Z3N0 tag found");                    }                });            }, err => console.log("PlayFab login skipped"));        }
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const accessToken = params.get('access_token');
-            const savedUser = localStorage.getItem('discord_user');
-            
-            if (savedUser) {
-                const user = JSON.parse(savedUser);
-                playerName = user.username;
-                showLoggedInState(user);
                 initPlayFab(user);
-                initPlayFab(user);
-            } else if (accessToken) {
+                showGame(user);
+            } else if (token) {
                 fetch('https://discord.com/api/users/@me', {
-                    headers: { 'Authorization': 'Bearer ' + accessToken }
-                })
-                .then(res => res.json())
-                .then(user => {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).then(r => r.json()).then(user => {
                     localStorage.setItem('discord_user', JSON.stringify(user));
                     playerName = user.username;
                     window.location.hash = '';
-                    showLoggedInState(user);
-                initPlayFab(user);
-                initPlayFab(user);
-                });
+                    initPlayFab(user);
+                    showGame(user);
+                }).catch(() => { loginStatus.textContent = 'Login failed'; });
             }
         }
-        
-        function showLoggedInState(user) {
-            loginStatus.innerHTML = `<div class="welcome-back">✅ Logged in as <strong>${user.username}</strong></div>`;
+
+        document.getElementById('login-btn').addEventListener('click', () => {
+            window.top.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+        });
+        unlinkBtn.addEventListener('click', () => {
+            localStorage.removeItem('discord_user');
+            location.reload();
+        });
+
+        function showGame(user) {
+            loginStatus.innerHTML = `✅ Logged in as <strong>${user.username}</strong>`;
             unlinkBtn.style.display = 'block';
-            
             setTimeout(() => {
                 loginScreen.classList.add('hidden');
                 gameScreen.classList.remove('hidden');
-                connectToServer();
+                connectServer();
             }, 1500);
         }
-        
-        function exchangeCodeForToken(code) {
-            loginStatus.textContent = 'Logging in...';
-            loginStatus.style.color = '#7289da';
-            
-            fetch("https://slither-game-server-ultm.onrender.com/api/discord/login?code=" + code)
-            .then(res => res.json())
-            .then(user => {
-                if (user.username) {
-                    localStorage.setItem('discord_user', JSON.stringify(user));
-                    playerName = user.username;
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    showLoggedInState(user);
-                initPlayFab(user);
-                initPlayFab(user);
-                } else {
-                    throw new Error('Login failed');
-                }
-            })
-            .catch(error => {
-                console.error('Discord login error:', error);
-                loginStatus.textContent = 'Login failed. Please try again.';
-                loginStatus.style.color = '#ff4444';
-            });
-        }
-        document.getElementById('discord-login-btn').addEventListener('click', () => {
-            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${DISCORD_REDIRECT_URI}&response_type=token&scope=identify`;
-            window.top.location.href = authUrl;
-        });
-        
-        unlinkBtn.addEventListener('click', () => {
-            localStorage.removeItem('discord_user');
-            playerName = 'Player';
-            loginStatus.textContent = 'Discord unlinked';
-            loginStatus.style.color = '#ffaa00';
-            unlinkBtn.style.display = 'none';
-            
-            if (socket) {
-                socket.disconnect();
-            }
-            
-            gameScreen.classList.add('hidden');
-            loginScreen.classList.remove('hidden');
-        });
 
-        // ==================== SERVER CONNECTION ====================
-        function connectToServer() {
-            socket = io(CONFIG.SERVER_URL, {
-                transports: ['websocket'],
-                upgrade: false
-            });
-            
-            socket.on('connect', () => {
-                console.log('Connected to server');
-                socket.emit('join', { name: playerName });
-                showNotification('Connected! Use WASD or Mouse to move');
-            });
-            
-            socket.on('playerId', (id) => {
-                playerId = id;
-            });
-            
-            socket.on('gameState', (state) => {
-                gamePlayers = state.players;
-                gameOrbs = state.orbs;
-                worldWidth = state.worldWidth;
-                worldHeight = state.worldHeight;
-                
-                updateLeaderboard();
-                updateAdminPlayerList();
-            });
-            
-            socket.on('playerDied', (data) => {
-                deathOverlay.classList.add('visible');
-                showNotification(`You were killed by ${data.killedBy || 'another player'}`);
-                setTimeout(() => {
-                    deathOverlay.classList.remove('visible');
-                }, 2000);
-            });
-            
-            socket.on('playerRespawned', () => {
-                showNotification('Respawned!');
-            });
-            
-            socket.on('disconnect', () => {
-                showNotification('Disconnected from server');
-            });
-            
-            socket.on('connect_error', (error) => {
-                console.error('Connection error:', error);
-                showNotification('Failed to connect! Is the server running?');
-            });
-        }
-
-        // ==================== INPUT HANDLING ====================
-        canvas.addEventListener('mousemove', (e) => {
-            if (movementMode === 'mouse') {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                
-                if (socket && playerId) {
-                    const player = gamePlayers.find(p => p.id === playerId);
-                    if (player) {
-                        socket.emit('mouseMove', {
-                            x: player.x + (mouseX - canvas.width / 2),
-                            y: player.y + (mouseY - canvas.height / 2)
-                        });
+        // ==================== PLAYFAB ====================
+        function initPlayFab(user) {
+            if (typeof PlayFab === 'undefined') return;
+            PlayFab.settings.titleId = PLAYFAB_TITLE;
+            PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {
+                playfabReady = true;
+                // Check for Z3N0 tag in user data
+                PlayFabClientAPI.GetUserData({ Keys: ['tag'] }, (data, err) => {
+                    if (data && data.Data && data.Data.tag && data.Data.tag.Value === 'Z3N0') {
+                        hasZ3N0 = true;
+                        console.log('Z3N0 tag confirmed');
                     }
-                }
+                });
+            }, err => console.log('PlayFab login skipped'));
+        }
+
+        // ==================== SERVER ====================
+        function connectServer() {
+            socket = io(SERVER, { transports: ['websocket'] });
+            socket.on('connect', () => {
+                socket.emit('join', { name: playerName });
+                notifMsg('Connected!');
+            });
+            socket.on('playerId', id => playerId = id);
+            socket.on('gameState', state => {
+                players = state.players;
+                orbs = state.orbs;
+                updateUI();
+            });
+            socket.on('playerDied', data => {
+                deathEl.classList.add('visible');
+                setTimeout(() => deathEl.classList.remove('visible'), 2000);
+            });
+            socket.on('playerRespawned', () => notifMsg('Respawned!'));
+            socket.on('disconnect', () => notifMsg('Disconnected'));
+            socket.on('connect_error', () => notifMsg('Server unreachable'));
+        }
+
+        // ==================== INPUT ====================
+        canvas.addEventListener('mousemove', e => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            if (movement === 'mouse' && socket && playerId) {
+                const me = players.find(p => p.id === playerId);
+                if (me) socket.emit('mouseMove', { x: me.x + (mouseX - canvas.width / 2), y: me.y + (mouseY - canvas.height / 2) });
             }
         });
-        
-        document.addEventListener('keydown', (e) => {
-            keysPressed[e.key.toLowerCase()] = true;
-            
-            if (e.key === ' ' || e.key === 'Shift') {
-                isBoosting = true;
-                if (socket) socket.emit('boosting', true);
-            }
+        document.addEventListener('keydown', e => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key === ' ') { boosting = true; socket?.emit('boosting', true); }
         });
-        
-        document.addEventListener('keyup', (e) => {
-            keysPressed[e.key.toLowerCase()] = false;
-            
-            if (e.key === ' ' || e.key === 'Shift') {
-                isBoosting = false;
-                if (socket) socket.emit('boosting', false);
-            }
+        document.addEventListener('keyup', e => {
+            keys[e.key.toLowerCase()] = false;
+            if (e.key === ' ') { boosting = false; socket?.emit('boosting', false); }
         });
 
         // ==================== GAME LOOP ====================
-        function gameLoop(timestamp) {
-            frameCount++;
-            if (timestamp - lastFrameTime >= 1000) {
-                fps = frameCount;
-                frameCount = 0;
-                lastFrameTime = timestamp;
-                if (showFPS) {
-                    fpsCounter.textContent = `${fps} FPS`;
-                } else {
-                    fpsCounter.textContent = '';
-                }
-            }
-            
-            if (movementMode === 'wasd' && socket && playerId) {
+        function gameLoop(ts) {
+            frames++;
+            if (ts - lastTime >= 1000) { fps = frames; frames = 0; lastTime = ts; fpsEl.textContent = fps + ' FPS'; }
+
+            if (movement === 'wasd' && socket && playerId) {
                 let angle = null;
-                
-                if (keysPressed['w'] || keysPressed['arrowup']) {
-                    if (keysPressed['a'] || keysPressed['arrowleft']) angle = -Math.PI * 3 / 4;
-                    else if (keysPressed['d'] || keysPressed['arrowright']) angle = -Math.PI / 4;
+                if (keys['w'] || keys['arrowup']) {
+                    if (keys['a'] || keys['arrowleft']) angle = -Math.PI * 3 / 4;
+                    else if (keys['d'] || keys['arrowright']) angle = -Math.PI / 4;
                     else angle = -Math.PI / 2;
-                } else if (keysPressed['s'] || keysPressed['arrowdown']) {
-                    if (keysPressed['a'] || keysPressed['arrowleft']) angle = Math.PI * 3 / 4;
-                    else if (keysPressed['d'] || keysPressed['arrowright']) angle = Math.PI / 4;
+                } else if (keys['s'] || keys['arrowdown']) {
+                    if (keys['a'] || keys['arrowleft']) angle = Math.PI * 3 / 4;
+                    else if (keys['d'] || keys['arrowright']) angle = Math.PI / 4;
                     else angle = Math.PI / 2;
-                } else if (keysPressed['a'] || keysPressed['arrowleft']) {
-                    angle = Math.PI;
-                } else if (keysPressed['d'] || keysPressed['arrowright']) {
-                    angle = 0;
-                }
-                
-                if (angle !== null) {
-                    socket.emit('keyMove', {
-                        angle: angle,
-                        boosting: isBoosting
-                    });
-                }
+                } else if (keys['a'] || keys['arrowleft']) angle = Math.PI;
+                else if (keys['d'] || keys['arrowright']) angle = 0;
+                if (angle !== null) socket.emit('keyMove', { angle, boosting });
             }
-            
-            if (socket && playerId) {
-                socket.emit('updateMovement', {
-                    speedMultiplier: adminFeatures.speedMultiplier,
-                    antiKill: adminFeatures.antiKill
-                });
+
+            socket?.emit('updateMovement', { speedMultiplier: admin.speed, antiKill: admin.god });
+
+            const me = players.find(p => p.id === playerId);
+            if (me) {
+                camX = me.x - canvas.width / 2;
+                camY = me.y - canvas.height / 2;
+                scoreEl.textContent = Math.floor(me.score || 0);
+                nameEl.textContent = me.name;
             }
-            
-            const player = gamePlayers.find(p => p.id === playerId);
-            if (player) {
-                cameraX = player.x - canvas.width / 2;
-                cameraY = player.y - canvas.height / 2;
-                scoreValue.textContent = Math.floor(player.score || 0);
-                playerNameDisplay.textContent = player.name || 'Player';
-            }
-            
+
             render();
             requestAnimationFrame(gameLoop);
         }
 
-        // ==================== RENDERER ====================
+        // ==================== RENDER ====================
         function render() {
-            const quality = document.getElementById('graphics-quality').value;
-            
-            ctx.fillStyle = '#0a0a1a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.save();
-            ctx.translate(-cameraX, -cameraY);
-            
-            // Draw grid
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-            ctx.lineWidth = 1;
-            const startX = Math.floor(cameraX / CONFIG.GRID_SIZE) * CONFIG.GRID_SIZE;
-            const startY = Math.floor(cameraY / CONFIG.GRID_SIZE) * CONFIG.GRID_SIZE;
-            
-            for (let x = startX; x < cameraX + canvas.width + CONFIG.GRID_SIZE; x += CONFIG.GRID_SIZE) {
-                ctx.beginPath();
-                ctx.moveTo(x, cameraY);
-                ctx.lineTo(x, cameraY + canvas.height);
-                ctx.stroke();
-            }
-            for (let y = startY; y < cameraY + canvas.height + CONFIG.GRID_SIZE; y += CONFIG.GRID_SIZE) {
-                ctx.beginPath();
-                ctx.moveTo(cameraX, y);
-                ctx.lineTo(cameraX + canvas.width, y);
-                ctx.stroke();
-            }
-            
-            // Draw borders
-            ctx.strokeStyle = '#ff4444';
-            ctx.lineWidth = CONFIG.BORDER_SIZE;
-            ctx.strokeRect(0, 0, worldWidth, worldHeight);
-            
-            ctx.strokeStyle = 'rgba(255, 68, 68, 0.3)';
-            ctx.lineWidth = CONFIG.BORDER_SIZE * 2;
-            ctx.strokeRect(-CONFIG.BORDER_SIZE/2, -CONFIG.BORDER_SIZE/2, worldWidth + CONFIG.BORDER_SIZE, worldHeight + CONFIG.BORDER_SIZE);
-            
-            // Draw orbs
-            gameOrbs.forEach(orb => {
-                if (quality !== 'low') {
-                    const gradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.radius * 3);
-                    gradient.addColorStop(0, orb.color);
-                    gradient.addColorStop(1, 'transparent');
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(orb.x, orb.y, orb.radius * 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    ctx.fillStyle = orb.color;
-                    ctx.beginPath();
-                    ctx.arc(orb.x, orb.y, orb.radius + Math.sin(orb.pulse) * 2, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                    ctx.beginPath();
-                    ctx.arc(orb.x - orb.radius * 0.3, orb.y - orb.radius * 0.3, orb.radius * 0.4, 0, Math.PI * 2);
-                    ctx.fill();
-                } else {
-                    ctx.fillStyle = orb.color;
-                    ctx.beginPath();
-                    ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
-                    ctx.fill();
+            const quality = document.getElementById('quality')?.value || 'high';
+            ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.save(); ctx.translate(-camX, -camY);
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth = 1;
+            const gs = 100, sx = Math.floor(camX / gs) * gs, sy = Math.floor(camY / gs) * gs;
+            for (let x = sx; x < camX + canvas.width + gs; x += gs) { ctx.beginPath(); ctx.moveTo(x, camY); ctx.lineTo(x, camY + canvas.height); ctx.stroke(); }
+            for (let y = sy; y < camY + canvas.height + gs; y += gs) { ctx.beginPath(); ctx.moveTo(camX, y); ctx.lineTo(camX + canvas.width, y); ctx.stroke(); }
+
+            // Border
+            ctx.strokeStyle = '#ff4444'; ctx.lineWidth = BORDER; ctx.strokeRect(0, 0, WORLD_W, WORLD_H);
+            ctx.strokeStyle = 'rgba(255,68,68,0.3)'; ctx.lineWidth = BORDER * 2;
+            ctx.strokeRect(-BORDER/2, -BORDER/2, WORLD_W + BORDER, WORLD_H + BORDER);
+
+            // Orbs (culled)
+            for (let o of orbs) {
+                if (o.x < camX - 50 || o.x > camX + canvas.width + 50 || o.y < camY - 50 || o.y > camY + canvas.height + 50) continue;
+                ctx.fillStyle = o.color;
+                ctx.beginPath(); ctx.arc(o.x, o.y, 7 + (quality === 'high' ? Math.sin(o.pulse || 0) * 2 : 0), 0, Math.PI * 2); ctx.fill();
+                if (quality === 'high') {
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    ctx.beginPath(); ctx.arc(o.x - 2, o.y - 2, 3, 0, Math.PI * 2); ctx.fill();
                 }
-            });
-            
-            // Draw players
-            gamePlayers.forEach(player => {
-                if (!player.isAlive) return;
-                const isLocalPlayer = player.id === playerId;
-                
-                if (adminFeatures.esp && !isLocalPlayer) {
-                    ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(player.x - 50, player.y - 50, 100, 100);
-                    
-                    ctx.fillStyle = 'rgba(255, 255, 0, 0.7)';
-                    ctx.font = '14px Arial';
-                    ctx.fillText(player.name, player.x - 30, player.y - 60);
-                    ctx.fillText(`Score: ${player.score}`, player.x - 30, player.y - 45);
-                }
-                
-                if (player.segments && player.segments.length > 0) {
-                    for (let i = player.segments.length - 1; i >= 0; i--) {
-                        const segment = player.segments[i];
-                        const alpha = 1 - (i / player.segments.length) * 0.5;
-                        
-                        if (quality !== 'low') {
-                            const gradient = ctx.createRadialGradient(
-                                segment.x, segment.y, 0,
-                                segment.x, segment.y, segment.radius * 1.5
-                            );
-                            gradient.addColorStop(0, player.color);
-                            gradient.addColorStop(1, 'transparent');
-                            ctx.fillStyle = gradient;
-                            ctx.beginPath();
-                            ctx.arc(segment.x, segment.y, segment.radius * 1.5, 0, Math.PI * 2);
-                            ctx.fill();
-                        }
-                        
-                        ctx.fillStyle = player.color;
-                        ctx.globalAlpha = alpha;
-                        ctx.beginPath();
-                        ctx.arc(segment.x, segment.y, segment.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        if (quality !== 'low' && i % 3 === 0) {
-                            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-                            ctx.beginPath();
-                            ctx.arc(segment.x, segment.y, segment.radius * 0.6, 0, Math.PI * 2);
-                            ctx.fill();
-                        }
-                    }
-                    ctx.globalAlpha = 1;
-                    
-                    const head = player.segments[0];
-                    const eyeAngle = player.angle || 0;
-                    const eyeOffset = head.radius * 0.5;
-                    
-                    ctx.fillStyle = 'white';
-                    ctx.beginPath();
-                    ctx.arc(
-                        head.x + Math.cos(eyeAngle - 0.5) * eyeOffset,
-                        head.y + Math.sin(eyeAngle - 0.5) * eyeOffset,
-                        head.radius * 0.35, 0, Math.PI * 2
-                    );
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(
-                        head.x + Math.cos(eyeAngle + 0.5) * eyeOffset,
-                        head.y + Math.sin(eyeAngle + 0.5) * eyeOffset,
-                        head.radius * 0.35, 0, Math.PI * 2
-                    );
-                    ctx.fill();
-                    
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath();
-                    ctx.arc(
-                        head.x + Math.cos(eyeAngle - 0.5) * eyeOffset + Math.cos(eyeAngle) * 3,
-                        head.y + Math.sin(eyeAngle - 0.5) * eyeOffset + Math.sin(eyeAngle) * 3,
-                        head.radius * 0.2, 0, Math.PI * 2
-                    );
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(
-                        head.x + Math.cos(eyeAngle + 0.5) * eyeOffset + Math.cos(eyeAngle) * 3,
-                        head.y + Math.sin(eyeAngle + 0.5) * eyeOffset + Math.sin(eyeAngle) * 3,
-                        head.radius * 0.2, 0, Math.PI * 2
-                    );
-                    ctx.fill();
-                    
-                    ctx.fillStyle = 'white';
-                    ctx.font = 'bold 14px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(player.name, head.x, head.y - head.radius - 15);
-                    
-                    if (player.tag) {
-                        ctx.fillStyle = player.tagColor || '#ffffff';
-                        ctx.font = 'bold 11px Arial';
-                        ctx.fillText(`[${player.tag}]`, head.x, head.y - head.radius - 30);
-                    }
-                    
-                    if (isLocalPlayer) {
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                        ctx.lineWidth = 3;
-                        ctx.beginPath();
-                        ctx.arc(head.x, head.y, head.radius + 5, 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
-                }
-            });
-            
-            if (adminFeatures.view3D) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-                ctx.fillRect(cameraX, cameraY + canvas.height * 0.7, canvas.width, canvas.height * 0.3);
-                
-                gamePlayers.forEach(player => {
-                    if (!player.isAlive || !player.segments) return;
-                    const head = player.segments[0];
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-                    ctx.beginPath();
-                    ctx.ellipse(head.x, head.y + 20, head.radius, head.radius * 0.3, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                });
             }
-            
+
+            // Players
+            for (let p of players) {
+                if (!p.isAlive || !p.segments) continue;
+                const head = p.segments[0];
+                if (head.x < camX - 150 || head.x > camX + canvas.width + 150 || head.y < camY - 150 || head.y > camY + canvas.height + 150) continue;
+
+                // ESP
+                if (admin.esp && p.id !== playerId) {
+                    ctx.strokeStyle = 'yellow'; ctx.lineWidth = 1;
+                    ctx.strokeRect(head.x - 40, head.y - 40, 80, 80);
+                    ctx.fillStyle = 'yellow'; ctx.font = '12px Arial'; ctx.textAlign = 'center';
+                    ctx.fillText(p.name, head.x, head.y - 50);
+                }
+
+                // Segments
+                for (let i = p.segments.length - 1; i >= 0; i--) {
+                    const seg = p.segments[i];
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = 1 - (i / p.segments.length) * 0.4;
+                    ctx.beginPath(); ctx.arc(seg.x, seg.y, seg.radius, 0, Math.PI * 2); ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+
+                // Eyes
+                const eyeAngle = p.angle || 0, eyeOff = head.radius * 0.5;
+                ctx.fillStyle = 'white';
+                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle - 0.5) * eyeOff, head.y + Math.sin(eyeAngle - 0.5) * eyeOff, head.radius * 0.35, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle + 0.5) * eyeOff, head.y + Math.sin(eyeAngle + 0.5) * eyeOff, head.radius * 0.35, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle - 0.5) * eyeOff + Math.cos(eyeAngle) * 3, head.y + Math.sin(eyeAngle - 0.5) * eyeOff + Math.sin(eyeAngle) * 3, head.radius * 0.2, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle + 0.5) * eyeOff + Math.cos(eyeAngle) * 3, head.y + Math.sin(eyeAngle + 0.5) * eyeOff + Math.sin(eyeAngle) * 3, head.radius * 0.2, 0, Math.PI * 2); ctx.fill();
+
+                // Name & tag
+                ctx.fillStyle = 'white'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
+                ctx.fillText(p.name, head.x, head.y - head.radius - 15);
+                if (p.tag) {
+                    ctx.fillStyle = p.tagColor || '#fff'; ctx.font = 'bold 11px Arial';
+                    ctx.fillText(`[${p.tag}]`, head.x, head.y - head.radius - 30);
+                }
+                // Highlight own player
+                if (p.id === playerId) {
+                    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.arc(head.x, head.y, head.radius + 5, 0, Math.PI * 2); ctx.stroke();
+                }
+            }
+
+            // 3D View effect
+            if (admin.view3D) {
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.fillRect(camX, camY + canvas.height * 0.7, canvas.width, canvas.height * 0.3);
+                for (let p of players) {
+                    if (!p.isAlive || !p.segments) continue;
+                    const head = p.segments[0];
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.beginPath(); ctx.ellipse(head.x, head.y + 15, head.radius, head.radius * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+
             ctx.restore();
-            
-            if (movementMode === 'mouse') {
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.arc(mouseX, mouseY, 10, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(mouseX - 15, mouseY);
-                ctx.lineTo(mouseX + 15, mouseY);
-                ctx.moveTo(mouseX, mouseY - 15);
-                ctx.lineTo(mouseX, mouseY + 15);
-                ctx.stroke();
+
+            // Crosshair
+            if (movement === 'mouse') {
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(mouseX, mouseY, 10, 0, Math.PI * 2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(mouseX - 15, mouseY); ctx.lineTo(mouseX + 15, mouseY); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(mouseX, mouseY - 15); ctx.lineTo(mouseX, mouseY + 15); ctx.stroke();
             }
         }
 
-        // ==================== UI FUNCTIONS ====================
-        function updateLeaderboard() {
-            const sorted = [...gamePlayers].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10);
-            leaderboardList.innerHTML = sorted.map((p, i) => 
-                `<li>${p.name} <span style="color: var(--accent)">${Math.floor(p.score || 0)}</span></li>`
-            ).join('');
-        }
-        
-        function updateAdminPlayerList() {
-            playersListAdmin.innerHTML = gamePlayers.map(p => `
-                <div class="player-entry">
-                    <div class="player-name">${p.name} ${p.tag ? `[${p.tag}]` : ''} - Score: ${Math.floor(p.score || 0)}</div>
+        // ==================== UI UPDATES ====================
+        function updateUI() {
+            const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10);
+            lbList.innerHTML = sorted.map((p, i) => `<li>${p.name} <span>${Math.floor(p.score || 0)}</span></li>`).join('');
+
+            playerListEl.innerHTML = players.map(p => `
+                <div style="background:#1a1a24;padding:10px;margin:5px 0;border-radius:8px;">
+                    <strong>${p.name}</strong> ${p.tag ? `[${p.tag}]` : ''} — ${Math.floor(p.score || 0)}
                     ${p.id !== playerId ? `
-                    <div class="player-actions">
-                        <button class="action-btn teleport" onclick="adminAction('${p.id}', 'teleportTo')">📍 Teleport To</button>
-                        <button class="action-btn bring" onclick="adminAction('${p.id}', 'bringHere')">🔄 Bring Here</button>
-                        <button class="action-btn kick" onclick="adminAction('${p.id}', 'kick')">🚫 Kick</button>
-                        <button class="action-btn kill" onclick="adminAction('${p.id}', 'kill')">💀 Kill</button>
-                        <button class="action-btn size" onclick="adminAction('${p.id}', 'giveSize')">📏 Give Size</button>
-                    </div>
-                    ` : '<small style="color: var(--accent)">(You)</small>'}
+                    <div style="margin-top:5px;">
+                        <button class="action-btn tp" onclick="adminAction('${p.id}','teleportTo')">📍 TP</button>
+                        <button class="action-btn br" onclick="adminAction('${p.id}','bringHere')">🔄 Bring</button>
+                        <button class="action-btn kk" onclick="adminAction('${p.id}','kick')">🚫 Kick</button>
+                        <button class="action-btn kl" onclick="adminAction('${p.id}','kill')">💀 Kill</button>
+                        <button class="action-btn sz" onclick="adminAction('${p.id}','giveSize')">📏 +Size</button>
+                    </div>` : '<small>(You)</small>'}
                 </div>
             `).join('');
         }
-        
+
         function adminAction(targetId, action) {
-            if (socket) {
-                socket.emit('adminAction', { targetId, action });
-                showNotification(`Admin: ${action} on player`);
-            }
-        }
-        
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+            socket?.emit('adminAction', { targetId, action });
+            notifMsg(`Admin: ${action}`);
         }
 
-        // ==================== PANEL TOGGLES ====================
-        document.getElementById('leaderboard-toggle').addEventListener('click', () => {
-            document.getElementById('leaderboard-panel').classList.toggle('hidden');
+        function notifMsg(msg) {
+            notif.textContent = msg;
+            notif.classList.add('show');
+            setTimeout(() => notif.classList.remove('show'), 3000);
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('movement').addEventListener('change', e => movement = e.target.value);
+        document.getElementById('speed').addEventListener('input', e => {
+            admin.speed = parseFloat(e.target.value);
+            document.getElementById('speed-val').textContent = admin.speed.toFixed(1) + 'x';
         });
-        
-        document.getElementById('close-leaderboard').addEventListener('click', () => {
-            document.getElementById('leaderboard-panel').classList.add('hidden');
+        document.getElementById('esp').addEventListener('change', e => admin.esp = e.target.checked);
+        document.getElementById('3dview').addEventListener('change', e => admin.view3D = e.target.checked);
+        document.getElementById('god').addEventListener('change', e => {
+            admin.god = e.target.checked;
+            notifMsg(e.target.checked ? 'God Mode ON' : 'God Mode OFF');
         });
-        
-        document.getElementById('admin-toggle').addEventListener('click', () => { if (!hasZ3N0Tag) { showNotification('Need Z3N0 tag for admin panel'); return; } if (!hasZ3N0Tag) { showNotification('🔒 Need Z3N0 tag for admin panel'); return; }
+        document.getElementById('giveself').addEventListener('click', () => {
+            socket?.emit('adminAction', { targetId: playerId, action: 'giveSize' });
+            notifMsg('Gave yourself size');
+        });
+
+        // Tag application
+        document.querySelectorAll('.apply-tag').forEach(btn => btn.addEventListener('click', () => {
+            const tag = btn.dataset.tag;
+            const color = document.getElementById(`tag-${tag.toLowerCase()}`).value;
+            socket?.emit('updateTag', { tag, tagColor: color });
+            if (playfabReady) PlayFabClientAPI.UpdateUserData({ Data: { tag, tagColor: color } }, () => {});
+        }));
+        document.getElementById('apply-custom').addEventListener('click', () => {
+            const tag = document.getElementById('custom-tag').value;
+            const color = document.getElementById('custom-color').value;
+            if (tag) {
+                socket?.emit('updateTag', { tag, tagColor: color });
+                if (playfabReady) PlayFabClientAPI.UpdateUserData({ Data: { tag, tagColor: color } }, () => {});
+            }
+        });
+
+        // Panel toggles
+        document.getElementById('lb-btn').addEventListener('click', () => document.getElementById('lb-panel').classList.toggle('hidden'));
+        document.getElementById('close-lb').addEventListener('click', () => document.getElementById('lb-panel').classList.add('hidden'));
+        document.getElementById('admin-btn').addEventListener('click', () => {
+            if (!hasZ3N0) { notifMsg('🔒 You need the Z3N0 tag to access the admin panel'); return; }
             document.getElementById('admin-panel').classList.toggle('hidden');
-            updateAdminPlayerList();
         });
-        
-        document.getElementById('settings-btn').addEventListener('click', () => {
-            document.getElementById('settings-panel').classList.toggle('hidden');
-        });
-        
-        document.getElementById('close-settings').addEventListener('click', () => {
-            document.getElementById('settings-panel').classList.add('hidden');
+        document.getElementById('settings-btn')?.addEventListener('click', () => document.getElementById('settings-panel').classList.toggle('hidden'));
+        document.getElementById('close-settings').addEventListener('click', () => document.getElementById('settings-panel').classList.add('hidden'));
+
+        // Admin tabs
+        document.querySelectorAll('.admin-tab').forEach(tab => tab.addEventListener('click', () => {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(`admin-${tab.dataset.tab}`).classList.add('active');
+        }));
+
+        // Escape to close panels
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') document.querySelectorAll('.ui-panel').forEach(p => p.classList.add('hidden'));
         });
 
-        // ==================== SETTINGS ====================
-        document.getElementById('movement-mode').addEventListener('change', (e) => {
-            movementMode = e.target.value;
-            showNotification(`Movement mode: ${movementMode.toUpperCase()}`);
-        });
-        
-        document.getElementById('show-fps').addEventListener('change', (e) => {
-            showFPS = e.target.checked;
-        });
-
-        // ==================== ADMIN TABS ====================
-        document.querySelectorAll('.admin-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(`admin-${tab.dataset.tab}`).classList.add('active');
-            });
-        });
-
-        // ==================== ADMIN FEATURES ====================
-        document.getElementById('speed-multiplier').addEventListener('input', (e) => {
-            adminFeatures.speedMultiplier = parseFloat(e.target.value);
-            document.getElementById('speed-value').textContent = adminFeatures.speedMultiplier.toFixed(1) + 'x';
-        });
-        
-        document.getElementById('esp-toggle').addEventListener('change', (e) => {
-            adminFeatures.esp = e.target.checked;
-        });
-        
-        document.getElementById('3d-view-toggle').addEventListener('change', (e) => {
-            adminFeatures.view3D = e.target.checked;
-        });
-        
-        document.getElementById('anti-kill-toggle').addEventListener('change', (e) => {
-            adminFeatures.antiKill = e.target.checked;
-            showNotification(e.target.checked ? 'God Mode: ON' : 'God Mode: OFF');
-        });
-        
-        document.getElementById('give-size-btn').addEventListener('click', () => {
-            if (socket && playerId) {
-                socket.emit('adminAction', { targetId: playerId, action: 'giveSize' });
-                showNotification('Gave size to yourself');
-            }
-        });
-
-        // ==================== TAG MANAGEMENT ====================
-        document.querySelectorAll('.apply-tag').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tag = btn.dataset.tag;
-                const colorInput = btn.parentElement.querySelector('.tag-color-input');
-                const color = colorInput ? colorInput.value : '#ffffff';
-                if (socket) {
-                    socket.emit('updateTag', { tag, tagColor: color });
-                    showNotification(`Tag set: [${tag}]`);
-                }
-            });
-        });
-        
-        document.getElementById('apply-custom-tag').addEventListener('click', () => {
-            const tagName = document.getElementById('custom-tag-name').value;
-            const tagColor = document.getElementById('custom-tag-color').value;
-            if (tagName && socket) {
-                socket.emit('updateTag', { tag: tagName, tagColor });
-                showNotification(`Custom tag applied: [${tagName}]`);
-            }
-        });
-
-        // ==================== KEYBOARD SHORTCUTS ====================
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
-            }
-        });
-
-        // ==================== STARTUP ====================
-        checkDiscordLogin();
+        // ==================== START ====================
+        checkLogin();
         requestAnimationFrame(gameLoop);
-        
-        console.log('🐍 Slither.io Z3N0 Edition Ready');
     </script>
 </body>
 </html>

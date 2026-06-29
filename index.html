@@ -451,14 +451,14 @@
             const tag = btn.dataset.tag;
             const color = document.getElementById(`tag-${tag.toLowerCase()}`).value;
             socket?.emit('updateTag', { tag, tagColor: color });
-                            if (playfabReady) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
+                            if (playfabReady && sessionTicket) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
         }));
         document.getElementById('apply-custom').addEventListener('click', () => {
             const tag = document.getElementById('custom-tag').value;
             const color = document.getElementById('custom-color').value;
             if (tag) {
                 socket?.emit('updateTag', { tag, tagColor: color });
-                            if (playfabReady) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
+                            if (playfabReady && sessionTicket) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
             }
         });
 

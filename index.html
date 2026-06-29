@@ -1,493 +1,1017 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slither.io - Z3N0 Edition</title>
-    <style>
-        :root {
-            --bg: #0a0a1a; --card: #1a1a24; --accent: #7289da;
-            --danger: #ff4444; --success: #44ff44; --border: #2a2a3a;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#000; overflow:hidden; font-family:'Segoe UI',Arial; color:#fff; user-select:none; }
-        .screen { width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; position:absolute; top:0; left:0; background:linear-gradient(135deg,#0a0a1a,#1a1a2e); }
-        .hidden { display:none !important; }
-        .login-container { text-align:center; }
-        .logo h1 { font-size:4rem; font-weight:800; background:linear-gradient(135deg,#7289da,#44ff44); -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:glow 2s infinite alternate; }
-        @keyframes glow { from{filter:drop-shadow(0 0 10px rgba(114,137,218,0.5));} to{filter:drop-shadow(0 0 30px rgba(68,255,68,0.5));} }
-        .login-card { background:var(--card); border-radius:20px; padding:2.5rem; min-width:350px; border:1px solid var(--border); backdrop-filter:blur(20px); }
-        .discord-btn { width:100%; padding:1rem; background:var(--accent); border:none; color:#fff; font-size:1.2rem; border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600; margin-bottom:10px; }
-        .discord-btn:hover { filter:brightness(1.2); }
-        .unlink-btn { background:var(--danger); }
-        #game-canvas { position:absolute; top:0; left:0; }
-        .ui-panel { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(19,19,26,0.95); border:1px solid var(--border); border-radius:16px; padding:20px; min-width:300px; max-height:70vh; overflow-y:auto; z-index:200; }
-        .admin-tabs { display:flex; gap:5px; margin-bottom:1rem; }
-        .admin-tab { flex:1; padding:8px; background:#1a1a24; border:1px solid var(--border); color:#fff; border-radius:8px 8px 0 0; cursor:pointer; }
-        .admin-tab.active { background:var(--accent); border-color:var(--accent); }
-        .admin-tab-content { display:none; }
-        .admin-tab-content.active { display:block; }
-        .action-btn { padding:5px 10px; border-radius:6px; border:none; cursor:pointer; font-size:0.8rem; margin:2px; color:#fff; }
-        .action-btn.tp{background:#4a90d9} .action-btn.br{background:#9b59b6}
-        .action-btn.kk{background:#ffaa00;color:#000} .action-btn.kl{background:#ff4444}
-        .action-btn.sz{background:#44ff44;color:#000}
-        #fps { position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.7); padding:5px 15px; border-radius:20px; font-size:0.9rem; z-index:100; }
-        #death { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,0,0,0.2); display:flex; align-items:center; justify-content:center; z-index:150; opacity:0; pointer-events:none; transition:opacity 0.3s; }
-        #death.visible { opacity:1; }
-        #death span { font-size:4rem; font-weight:800; text-shadow:0 0 30px rgba(255,0,0,0.8); }
-        #notif { position:absolute; top:100px; left:50%; transform:translateX(-50%); background:#1a1a24; padding:10px 25px; border-radius:30px; z-index:300; opacity:0; transition:opacity 0.3s; }
-        #notif.show { opacity:1; }
-        .feature-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slither.io — Z3N0</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0e14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#20253a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --accent:#6c8ef5;--accent-d:#4a6be0;
+  --green:#3ecf8e;--red:#f56565;--yellow:#f6ad55;--purple:#b794f4;
+  --text:#e8eaf0;--text2:#8892a4;--text3:#4a5368;
+  --r:12px;--r-sm:8px;
+  --sh:0 4px 24px rgba(0,0,0,0.5);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;user-select:none}
+
+/* SCREENS */
+.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.hidden{display:none!important}
+
+/* ── DISCORD LOGIN ── */
+#s-login{
+  background:radial-gradient(ellipse 60% 50% at 30% 30%,rgba(108,142,245,0.1) 0%,transparent 70%),var(--bg);
+}
+.login-box{display:flex;flex-direction:column;align-items:center;gap:24px}
+.logo-text{font-size:3rem;font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(135deg,#6c8ef5,#3ecf8e);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-tag{font-size:.65rem;letter-spacing:.35em;color:var(--text3);text-transform:uppercase;margin-top:-18px}
+.card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:28px;width:320px;display:flex;flex-direction:column;gap:12px}
+.card h2{font-size:.9rem;color:var(--text2);text-align:center;font-weight:500}
+.dbtn{width:100%;padding:12px;border:none;border-radius:var(--r-sm);font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .15s,transform .1s}
+.dbtn:hover{opacity:.88;transform:translateY(-1px)}
+.dbtn:active{transform:translateY(0);opacity:.75}
+.dbtn-discord{background:#5865f2;color:#fff}
+.dbtn-danger{background:var(--red);color:#fff}
+#login-status{font-size:.8rem;color:var(--text2);text-align:center;min-height:16px}
+
+/* ── MAIN MENU ── */
+#s-menu{
+  background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(108,142,245,0.07) 0%,transparent 70%),var(--bg);
+}
+.menu-wrap{display:flex;gap:32px;align-items:flex-start;max-width:860px;width:100%;padding:0 24px}
+.menu-left{display:flex;flex-direction:column;gap:16px;min-width:260px}
+.menu-logo{font-size:2.2rem;font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(135deg,#6c8ef5,#3ecf8e);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.menu-profile{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px}
+.profile-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--green));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#fff;flex-shrink:0}
+.profile-row{display:flex;align-items:center;gap:12px}
+.profile-info{display:flex;flex-direction:column;gap:2px}
+.profile-name{font-weight:700;font-size:1rem}
+.profile-pf{font-size:.72rem;color:var(--text3);font-family:monospace}
+.profile-status{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--green)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.mbtn{width:100%;padding:13px 16px;border:none;border-radius:var(--r-sm);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:10px}
+.mbtn:hover{filter:brightness(1.12);transform:translateX(2px)}
+.mbtn-primary{background:var(--accent);color:#fff}
+.mbtn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.mbtn-red{background:rgba(245,101,101,0.15);color:var(--red);border:1px solid rgba(245,101,101,0.25)}
+
+.menu-right{flex:1;display:flex;flex-direction:column;gap:16px}
+.inventory-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:20px}
+.inv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.inv-title{font-size:.95rem;font-weight:700}
+.inv-sub{font-size:.75rem;color:var(--text3)}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.inv-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:border-color .15s}
+.inv-item:hover{border-color:var(--border2)}
+.inv-item.equipped{border-color:var(--accent);background:rgba(108,142,245,0.08)}
+.inv-icon{font-size:1.8rem;line-height:1}
+.inv-name{font-size:.72rem;font-weight:600;text-align:center;color:var(--text2)}
+.inv-equip{padding:4px 10px;border:none;border-radius:5px;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .15s}
+.inv-equip.on{background:var(--accent);color:#fff}
+.inv-equip.off{background:var(--bg4);color:var(--text2);border:1px solid var(--border2)}
+.inv-equip:hover{filter:brightness(1.15)}
+.inv-empty{color:var(--text3);font-size:.85rem;text-align:center;padding:24px 0}
+
+/* ── GAME SCREEN ── */
+#s-game{background:var(--bg)}
+#game-canvas{position:absolute;inset:0}
+
+/* HUD */
+#hud{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:14px;z-index:100;
+  background:rgba(13,15,22,0.85);border:1px solid var(--border2);
+  border-radius:40px;padding:7px 18px;backdrop-filter:blur(10px);
+  box-shadow:var(--sh)
+}
+.hud-name{font-weight:700;font-size:.9rem}
+.hud-div{width:1px;height:16px;background:var(--border2)}
+.hud-score{font-size:.82rem;color:var(--text2)}
+.hud-score b{color:var(--accent)}
+.hbtn{background:none;border:none;cursor:pointer;font-size:1.15rem;padding:2px 5px;border-radius:6px;transition:background .12s;line-height:1}
+.hbtn:hover{background:var(--border2)}
+
+/* FPS */
+#fps-ctr{position:absolute;bottom:14px;right:14px;background:rgba(13,15,22,0.8);border:1px solid var(--border);padding:3px 12px;border-radius:20px;font-size:.72rem;color:var(--text2);z-index:100;font-family:monospace}
+
+/* DEATH */
+#death{position:absolute;inset:0;background:rgba(245,101,101,0.1);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:150;opacity:0;pointer-events:none;transition:opacity .2s}
+#death.show{opacity:1}
+.death-h{font-size:3.2rem;font-weight:900;color:var(--red);letter-spacing:3px;text-shadow:0 0 30px rgba(245,101,101,0.5)}
+.death-s{font-size:.9rem;color:var(--text2);margin-top:6px}
+
+/* TOAST */
+#toast{position:absolute;top:64px;left:50%;transform:translateX(-50%);
+  background:var(--bg3);border:1px solid var(--border2);
+  padding:7px 20px;border-radius:30px;font-size:.82rem;
+  z-index:400;opacity:0;transition:opacity .18s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+
+/* PANELS */
+.panel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(12,14,20,0.96);border:1px solid var(--border2);
+  border-radius:var(--r);padding:18px 20px;z-index:200;
+  box-shadow:var(--sh);backdrop-filter:blur(16px);
+  max-height:72vh;overflow-y:auto;min-width:300px}
+.panel::-webkit-scrollbar{width:3px}
+.panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ph h3{font-size:.95rem;font-weight:700}
+.px{background:none;border:none;cursor:pointer;color:var(--text2);font-size:1rem;padding:2px 7px;border-radius:5px}
+.px:hover{background:var(--border);color:var(--text)}
+
+/* TABS */
+.tabs{display:flex;background:var(--bg3);border-radius:var(--r-sm);padding:3px;gap:3px;margin-bottom:14px}
+.tab{flex:1;padding:6px;background:transparent;border:none;color:var(--text2);border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:600;transition:all .12s}
+.tab.on{background:var(--accent);color:#fff}
+.tc{display:none}.tc.on{display:block}
+
+/* FEATURE ROWS */
+.fr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);gap:8px}
+.fr:last-child{border-bottom:none}
+.fr label{font-size:.83rem;color:var(--text2);flex-shrink:0}
+.fr select,.fr input[type=text],.fr input[type=number]{background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:4px 8px;font-size:.82rem;outline:none}
+.fr select:focus,.fr input:focus{border-color:var(--accent)}
+.fr input[type=range]{flex:1;accent-color:var(--accent)}
+.vbadge{font-size:.78rem;color:var(--accent);font-weight:700;min-width:26px;text-align:right}
+.stitle{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin:10px 0 6px}
+
+/* TOGGLE */
+.tog{position:relative;width:36px;height:20px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tslider{position:absolute;inset:0;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;cursor:pointer;transition:background .18s}
+.tslider::before{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:var(--text3);bottom:2px;left:2px;transition:transform .18s,background .18s}
+.tog input:checked+.tslider{background:var(--accent)}
+.tog input:checked+.tslider::before{transform:translateX(16px);background:#fff}
+
+/* ACTION BTNS */
+.ab{padding:4px 9px;border-radius:5px;border:none;cursor:pointer;font-size:.72rem;font-weight:700;transition:filter .12s;color:#fff}
+.ab:hover{filter:brightness(1.2)}
+.ab-blue{background:var(--accent)}
+.ab-purple{background:var(--purple)}
+.ab-yellow{background:var(--yellow);color:#1a1000}
+.ab-red{background:var(--red)}
+.ab-green{background:var(--green);color:#001a0e}
+.ab-ban{background:rgba(245,101,101,0.12);color:var(--red);border:1px solid rgba(245,101,101,0.3)}
+
+/* PLAYER CARDS */
+.pcard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:border-color .12s}
+.pcard:hover{border-color:var(--border2)}
+.pcard.open{border-color:var(--accent)}
+.pc-head{display:flex;align-items:center;justify-content:space-between}
+.pc-name{font-weight:700;font-size:.88rem}
+.pc-pts{font-size:.75rem;color:var(--text2)}
+.pc-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+
+/* LB */
+.lb-list{display:flex;flex-direction:column;gap:5px;list-style:none}
+.lb-li{display:flex;align-items:center;background:var(--bg3);padding:7px 11px;border-radius:var(--r-sm);font-size:.84rem}
+.lb-li:first-child{background:rgba(108,142,245,0.1);border:1px solid rgba(108,142,245,0.2)}
+.lb-rank{color:var(--text3);width:18px;font-size:.74rem}
+.lb-name{flex:1;margin-left:7px;font-weight:600}
+.lb-pts{color:var(--accent);font-weight:700;font-size:.82rem}
+
+/* TAG ROWS */
+.tagrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.tagrow:last-child{border-bottom:none}
+.taglabel{font-size:.85rem;font-weight:600}
+.tagctrl{display:flex;align-items:center;gap:6px}
+.tagctrl input[type=color]{width:26px;height:26px;border:none;border-radius:5px;background:none;cursor:pointer;padding:0}
+.tapply{padding:4px 11px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:5px;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .12s}
+.tapply:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+</style>
 </head>
 <body>
-    <div id="login-screen" class="screen">
-        <div class="login-container">
-            <div class="logo"><h1>🐍 SLITHER<span style="color:#44ff44">.IO</span></h1></div>
-            <div class="login-card">
-                <h2>Login with Discord</h2>
-                <button id="login-btn" class="discord-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-                    Login with Discord
-                </button>
-                <button id="unlink-btn" class="discord-btn unlink-btn">Unlink Account</button>
-                <div id="login-status"></div>
-            </div>
+
+<!-- ══ DISCORD LOGIN ══ -->
+<div id="s-login" class="screen">
+  <div class="login-box">
+    <div>
+      <div class="logo-text">🐍 SLITHER.IO</div>
+      <div class="logo-tag">Z3N0 Edition</div>
+    </div>
+    <div class="card">
+      <h2>Sign in to continue</h2>
+      <button id="btn-login" class="dbtn dbtn-discord">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        Continue with Discord
+      </button>
+      <button id="btn-unlink" class="dbtn dbtn-danger" style="display:none">Unlink Account</button>
+      <div id="login-status"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN MENU ══ -->
+<div id="s-menu" class="screen hidden">
+  <div class="menu-wrap">
+    <div class="menu-left">
+      <div class="menu-logo">🐍 Z3N0</div>
+      <div class="menu-profile">
+        <div class="profile-row">
+          <div class="profile-avatar" id="menu-avatar">?</div>
+          <div class="profile-info">
+            <div class="profile-name" id="menu-username">Loading...</div>
+            <div class="profile-pf" id="menu-pfid">PlayFab ID: ...</div>
+          </div>
         </div>
+        <div class="profile-status" id="menu-pf-status">
+          <div class="status-dot" style="background:var(--yellow)"></div>
+          Connecting to PlayFab...
+        </div>
+      </div>
+      <button class="mbtn mbtn-primary" id="btn-play">▶ &nbsp;Play</button>
+      <button class="mbtn mbtn-secondary" id="btn-inventory-toggle">🎒 &nbsp;Owned Items</button>
+      <button class="mbtn mbtn-red" id="btn-logout">↩ &nbsp;Log Out</button>
     </div>
 
-    <div id="game-screen" class="screen hidden">
-        <canvas id="game-canvas"></canvas>
-        <div style="position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;gap:20px;z-index:100;background:rgba(0,0,0,0.7);padding:8px 20px;border-radius:30px;">
-            <span id="pname">Player</span>
-            <span>Score: <span id="score">0</span></span>
-            <button id="lb-btn" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">🏆</button>
-            <button id="admin-btn" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">⚡</button>
+    <div class="menu-right" id="menu-inventory-section" style="display:none">
+      <div class="inventory-panel">
+        <div class="inv-header">
+          <div>
+            <div class="inv-title">Your Inventory</div>
+            <div class="inv-sub" id="inv-sub">Loading items from PlayFab...</div>
+          </div>
         </div>
-        <div id="fps">60 FPS</div>
-        <div id="death"><span>YOU DIED</span></div>
-        <div id="notif"></div>
-
-        <!-- Settings -->
-        <div id="settings-panel" class="ui-panel hidden">
-            <h3>⚙️ Settings</h3>
-            <div class="feature-row"><label>Movement:</label> <select id="movement"><option value="mouse">Mouse</option><option value="wasd">WASD</option></select></div>
-            <div class="feature-row"><label>Quality:</label> <select id="quality"><option value="high">High</option><option value="low">Low</option></select></div>
-            <button id="close-settings" style="width:100%;margin-top:10px;">Close</button>
+        <div class="inv-grid" id="inv-grid">
+          <div class="inv-empty">Loading...</div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <!-- Leaderboard -->
-        <div id="lb-panel" class="ui-panel hidden">
-            <h3>🏆 Leaderboard</h3>
-            <ol id="lb-list"></ol>
-            <button id="close-lb" style="width:100%;margin-top:10px;">Close</button>
-        </div>
+<!-- ══ GAME SCREEN ══ -->
+<div id="s-game" class="screen hidden">
+  <canvas id="game-canvas"></canvas>
 
-        <!-- Z3N0 Admin Panel -->
-        <div id="admin-panel" class="ui-panel hidden" style="max-width:450px;">
-            <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="players">👥 Players</button>
-                <button class="admin-tab" data-tab="local">🔧 Local</button>
-                <button class="admin-tab" data-tab="cosmetics">🎨 Cosmetics</button>
-            </div>
+  <div id="hud">
+    <span class="hud-name" id="hud-name">Player</span>
+    <div class="hud-div"></div>
+    <span class="hud-score">Score <b id="hud-score">0</b></span>
+    <div class="hud-div"></div>
+    <button class="hbtn" id="btn-lb" title="Leaderboard">🏆</button>
+    <button class="hbtn" id="btn-settings" title="Settings">⚙️</button>
+    <button class="hbtn" id="btn-admin" title="Z3N0 Panel">⚡</button>
+    <button class="hbtn" id="btn-menu-back" title="Main Menu">🏠</button>
+  </div>
 
-            <!-- Players tab -->
-            <div id="admin-players" class="admin-tab-content active">
-                <h3>Connected Players</h3>
-                <div id="player-list"></div>
-            </div>
+  <div id="fps-ctr">60 FPS</div>
+  <div id="death"><div class="death-h">YOU DIED</div><div class="death-s">Respawning…</div></div>
+  <div id="toast"></div>
 
-            <!-- Local tab -->
-            <div id="admin-local" class="admin-tab-content hidden">
-                <h3>Local Features</h3>
-                <div class="feature-row"><label>Speed Multiplier:</label> <input type="range" id="speed" min="1" max="10" step="0.5" value="1"> <span id="speed-val">1x</span></div>
-                <div class="feature-row"><label>ESP:</label> <input type="checkbox" id="esp"></div>
-                <div class="feature-row"><label>3D View:</label> <input type="checkbox" id="3dview"></div>
-                <div class="feature-row"><label>God Mode (Anti-Kill):</label> <input type="checkbox" id="god"></div>
-                <div class="feature-row"><label>Give Self Size:</label> <input type="number" id="self-size" value="10" min="1" style="width:60px;"> <button id="giveself" class="action-btn sz">Apply</button></div>
-            </div>
+  <!-- Settings -->
+  <div id="p-settings" class="panel hidden" style="min-width:280px">
+    <div class="ph"><h3>⚙️ Settings</h3><button class="px" data-close="p-settings">✕</button></div>
+    <div class="stitle">Controls</div>
+    <div class="fr"><label>Movement</label>
+      <select id="set-movement"><option value="mouse">Mouse</option><option value="wasd">WASD / Arrows</option></select>
+    </div>
+    <div class="fr"><label>Render quality</label>
+      <select id="set-quality"><option value="high">High</option><option value="low">Low (more FPS)</option></select>
+    </div>
+  </div>
 
-            <!-- Cosmetics tab -->
-            <div id="admin-cosmetics" class="admin-tab-content hidden">
-                <h3>Tag Management</h3>
-                <div class="feature-row"><span>Z3N0</span> <div><input type="color" id="tag-z3n0" value="#ff4444"> <button class="apply-tag" data-tag="Z3N0">Apply</button></div></div>
-                <div class="feature-row"><span>Quad</span> <div><input type="color" id="tag-quad" value="#44ff44"> <button class="apply-tag" data-tag="Quad">Apply</button></div></div>
-                <div class="feature-row"><span>Shadow</span> <div><input type="color" id="tag-shadow" value="#9b59b6"> <button class="apply-tag" data-tag="Shadow">Apply</button></div></div>
-                <div class="feature-row"><span>Pingio</span> <div><input type="color" id="tag-pingio" value="#ffaa00"> <button class="apply-tag" data-tag="Pingio">Apply</button></div></div>
-                <div class="feature-row" style="flex-direction:column;align-items:flex-start;">
-                    <label>Custom Tag:</label>
-                    <div style="display:flex;gap:5px;width:100%;">
-                        <input type="text" id="custom-tag" placeholder="Tag name" style="flex:1;">
-                        <input type="color" id="custom-color" value="#ffffff">
-                        <button id="apply-custom">Apply</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- Leaderboard -->
+  <div id="p-lb" class="panel hidden" style="min-width:260px">
+    <div class="ph"><h3>🏆 Leaderboard</h3><button class="px" data-close="p-lb">✕</button></div>
+    <ol class="lb-list" id="lb-list"></ol>
+  </div>
+
+  <!-- Z3N0 Admin Panel -->
+  <div id="p-admin" class="panel hidden" style="min-width:360px;max-width:440px">
+    <div class="ph"><h3>⚡ Z3N0 Client</h3><button class="px" data-close="p-admin">✕</button></div>
+    <div class="tabs">
+      <button class="tab on" data-tab="t-players">👥 Players</button>
+      <button class="tab" data-tab="t-local">🔧 Local</button>
+      <button class="tab" data-tab="t-cosmetics">🎨 Cosmetics</button>
     </div>
 
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-    <script>
-        // ==================== CONFIG ====================
-        const DISCORD_CLIENT_ID = '1521216585292058734';
-        const REDIRECT_URI = 'https://slither-server.vercel.app';
-        const PLAYFAB_TITLE = '10C130';
-        const SERVER = 'https://slither-game-server-ultm.onrender.com';
-        const WORLD_W = 5000, WORLD_H = 5000, BORDER = 20;
+    <!-- Players -->
+    <div id="t-players" class="tc on">
+      <div class="stitle">Click a player to expand</div>
+      <div id="player-list"></div>
+    </div>
 
-        // ==================== STATE ====================
-        let socket, playerId, playerName = 'Player';
-        let players = [], orbs = [];
-        let mouseX = 0, mouseY = 0, camX = 0, camY = 0;
-        let movement = 'mouse', keys = {}, boosting = false;
-        let fps = 0, lastTime = 0, frames = 0;
-        let admin = { speed: 1, esp: false, view3D: false, god: false };
-        let hasZ3N0 = false, playfabReady = false;
+    <!-- Local -->
+    <div id="t-local" class="tc">
+      <div class="stitle">Features</div>
+      <div class="fr"><label>Speed multiplier</label>
+        <input type="range" id="l-speed" min="1" max="10" step="0.5" value="1">
+        <span class="vbadge" id="l-speed-v">1×</span>
+      </div>
+      <div class="fr"><label>ESP</label><label class="tog"><input type="checkbox" id="l-esp"><span class="tslider"></span></label></div>
+      <div class="fr"><label>3D View</label><label class="tog"><input type="checkbox" id="l-3d"><span class="tslider"></span></label></div>
+      <div class="fr"><label>God Mode</label><label class="tog"><input type="checkbox" id="l-god"><span class="tslider"></span></label></div>
+      <div class="fr"><label>Give self size</label><button id="l-giveself" class="ab ab-green">＋ Size</button></div>
+      <div class="fr" style="flex-direction:column;align-items:flex-start;gap:7px">
+        <label>Display name</label>
+        <div style="display:flex;gap:6px;width:100%">
+          <input type="text" id="l-name" style="flex:1" placeholder="Name">
+          <button id="l-apply-name" class="tapply">Apply</button>
+        </div>
+      </div>
+    </div>
 
-        // DOM
-        const canvas = document.getElementById('game-canvas');
-        const ctx = canvas.getContext('2d');
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
+    <!-- Cosmetics -->
+    <div id="t-cosmetics" class="tc">
+      <div class="stitle">Preset tags</div>
+      <div class="tagrow"><span class="taglabel" style="color:#f56565">Z3N0</span><div class="tagctrl"><input type="color" id="tc-z3n0" value="#f56565"><button class="tapply ptag" data-tag="Z3N0">Apply</button></div></div>
+      <div class="tagrow"><span class="taglabel" style="color:#3ecf8e">Quad</span><div class="tagctrl"><input type="color" id="tc-quad" value="#3ecf8e"><button class="tapply ptag" data-tag="Quad">Apply</button></div></div>
+      <div class="tagrow"><span class="taglabel" style="color:#b794f4">Shadow</span><div class="tagctrl"><input type="color" id="tc-shadow" value="#b794f4"><button class="tapply ptag" data-tag="Shadow">Apply</button></div></div>
+      <div class="tagrow"><span class="taglabel" style="color:#f6ad55">Pingio</span><div class="tagctrl"><input type="color" id="tc-pingio" value="#f6ad55"><button class="tapply ptag" data-tag="Pingio">Apply</button></div></div>
+      <div class="stitle" style="margin-top:12px">Custom tag</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" id="tc-custom" placeholder="Tag name" style="flex:1">
+        <input type="color" id="tc-custom-color" value="#6c8ef5">
+        <button id="tc-apply-custom" class="tapply">Apply</button>
+      </div>
+      <div style="margin-top:10px">
+        <button id="tc-clear" class="tapply" style="width:100%">Remove tag</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-        const loginScreen = document.getElementById('login-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const scoreEl = document.getElementById('score');
-        const nameEl = document.getElementById('pname');
-        const fpsEl = document.getElementById('fps');
-        const deathEl = document.getElementById('death');
-        const notif = document.getElementById('notif');
-        const lbList = document.getElementById('lb-list');
-        const playerListEl = document.getElementById('player-list');
-        const loginStatus = document.getElementById('login-status');
-        const unlinkBtn = document.getElementById('unlink-btn');
+<script src="https://download.playfab.com/PlayFabClientApi.js"></script>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script>
+// ══════════════════════════════
+//  CONFIG — edit these two only
+// ══════════════════════════════
+const DISCORD_CLIENT_ID = '1521216585292058734';
+const REDIRECT_URI      = 'https://slither-server.vercel.app';
+const SERVER            = 'https://slither-game-server-ultm.onrender.com';
+const PLAYFAB_TITLE_ID  = '10C130';
+const WORLD_W = 5000, WORLD_H = 5000, BORDER = 20;
 
-        // ==================== DISCORD AUTH ====================
-        function checkLogin() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get("access_token");
-            const saved = localStorage.getItem("discord_user");
-            if (saved) {
-                const user = JSON.parse(saved);
-                playerName = user.username;
-                initPlayFab(user);
-                showGame(user);
-            } else if (token) {
-                fetch(SERVER + "/api/discord/me?token=" + token)
-                .then(r => r.json())
-                .then(user => {
-                    if (user.username) {
-                        localStorage.setItem("discord_user", JSON.stringify(user));
-                        playerName = user.username;
-                        window.location.hash = "";
-                        initPlayFab(user);
-                        showGame(user);
-                    } else {
-                        loginStatus.textContent = "Login failed";
-                    }
-                }).catch(() => { loginStatus.textContent = "Login failed"; });
-            }
-        }
+// ══════════════════════════════
+//  STATE
+// ══════════════════════════════
+let socket, playerId, playerName = 'Player';
+let discordUser = null, playfabReady = false, playfabId = '';
+let players = [], orbs = [];
+let mouseX = 0, mouseY = 0;
+let camX = 0, camY = 0, camTX = 0, camTY = 0;
+let movementMode = 'mouse', keys = {}, boosting = false;
+let fpsCount = 0, fpsLast = 0, currentFps = 0;
+let admin = { speed: 1, esp: false, view3D: false, god: false };
+let hasZ3N0 = false;
+let expandedPCard = null;
+let equippedTag = '', equippedTagColor = '#6c8ef5';
 
-        document.getElementById('login-btn').addEventListener('click', () => {
-            window.top.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify`;
-        });
-        unlinkBtn.addEventListener('click', () => {
-            localStorage.removeItem('discord_user');
-            location.reload();
-        });
+// Client prediction
+let lx = 0, ly = 0, langle = 0;
+let predicting = false;
+let snakeSpeed = 3;
 
-        function showGame(user) {
-            loginStatus.innerHTML = `✅ Logged in as <strong>${user.username}</strong>`;
-            unlinkBtn.style.display = 'block';
-            setTimeout(() => {
-                loginScreen.classList.add('hidden');
-                gameScreen.classList.remove('hidden');
-                connectServer();
-            }, 1500);
-        }
+// DOM
+const canvas  = document.getElementById('game-canvas');
+const ctx     = canvas.getContext('2d');
+const toastEl = document.getElementById('toast');
+const deathEl = document.getElementById('death');
+const lbListEl= document.getElementById('lb-list');
+const plListEl= document.getElementById('player-list');
 
-        // ==================== PLAYFAB ====================
-        async function initPlayFab(user) {
-            try {
-                await waitForPlayFab();
-                PlayFab.settings.titleId = PLAYFAB_TITLE;
-                PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {
-                    playfabReady = true;
-                    PlayFabClientAPI.GetUserData({ Keys: ["tag"] }, (data, err) => {
-                        if (data && data.Data && data.Data.tag && data.Data.tag.Value === "Z3N0") {
-                            hasZ3N0 = true;
-                        }
-                    });
-                });
-            } catch (e) {
-                console.log("PlayFab unavailable – admin panel open for now");
-                hasZ3N0 = true;
-            }
-        }
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+addEventListener('resize', resize); resize();
 
+// ══════════════════════════════
+//  SCREEN ROUTING
+// ══════════════════════════════
+function show(id) {
+  ['s-login','s-menu','s-game'].forEach(s =>
+    document.getElementById(s).classList[s===id?'remove':'add']('hidden'));
+}
 
-        // ==================== SERVER ====================
-        function connectServer() {
-            socket = io(SERVER, { transports: ['websocket'] });
-            socket.on('connect', () => {
-                socket.emit('join', { name: playerName });
-                notifMsg('Connected!');
-            });
-            socket.on('playerId', id => playerId = id);
-            socket.on('gameState', state => {
-                players = state.players;
-                orbs = state.orbs;
-                updateUI();
-            });
-            socket.on('playerDied', data => {
-                deathEl.classList.add('visible');
-                setTimeout(() => deathEl.classList.remove('visible'), 2000);
-            });
-            socket.on('playerRespawned', () => notifMsg('Respawned!'));
-            socket.on('disconnect', () => notifMsg('Disconnected'));
-            socket.on('connect_error', () => notifMsg('Server unreachable'));
-        }
+// ══════════════════════════════
+//  TOAST
+// ══════════════════════════════
+let toastTimer;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
+}
 
-        // ==================== INPUT ====================
-        canvas.addEventListener('mousemove', e => {
-            mouseX = e.clientX; mouseY = e.clientY;
-            if (movement === 'mouse' && socket && playerId) {
-                const me = players.find(p => p.id === playerId);
-                if (me) socket.emit('mouseMove', { x: me.x + (mouseX - canvas.width / 2), y: me.y + (mouseY - canvas.height / 2) });
-            }
-        });
-        document.addEventListener('keydown', e => {
-            keys[e.key.toLowerCase()] = true;
-            if (e.key === ' ') { boosting = true; socket?.emit('boosting', true); }
-        });
-        document.addEventListener('keyup', e => {
-            keys[e.key.toLowerCase()] = false;
-            if (e.key === ' ') { boosting = false; socket?.emit('boosting', false); }
-        });
+// ══════════════════════════════
+//  DISCORD AUTH
+// ══════════════════════════════
+document.getElementById('btn-login').onclick = () => {
+  window.top.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+};
+document.getElementById('btn-unlink').onclick = () => {
+  localStorage.removeItem('discord_user');
+  location.reload();
+};
+document.getElementById('btn-logout').onclick = () => {
+  localStorage.removeItem('discord_user');
+  location.reload();
+};
 
-        // ==================== GAME LOOP ====================
-        function gameLoop(ts) {
-            frames++;
-            if (ts - lastTime >= 1000) { fps = frames; frames = 0; lastTime = ts; fpsEl.textContent = fps + ' FPS'; }
+function checkDiscordLogin() {
+  const hash = window.location.hash.slice(1);
+  const params = new URLSearchParams(hash);
+  const token = params.get('access_token');
+  const saved = localStorage.getItem('discord_user');
 
-            if (movement === 'wasd' && socket && playerId) {
-                let angle = null;
-                if (keys['w'] || keys['arrowup']) {
-                    if (keys['a'] || keys['arrowleft']) angle = -Math.PI * 3 / 4;
-                    else if (keys['d'] || keys['arrowright']) angle = -Math.PI / 4;
-                    else angle = -Math.PI / 2;
-                } else if (keys['s'] || keys['arrowdown']) {
-                    if (keys['a'] || keys['arrowleft']) angle = Math.PI * 3 / 4;
-                    else if (keys['d'] || keys['arrowright']) angle = Math.PI / 4;
-                    else angle = Math.PI / 2;
-                } else if (keys['a'] || keys['arrowleft']) angle = Math.PI;
-                else if (keys['d'] || keys['arrowright']) angle = 0;
-                if (angle !== null) socket.emit('keyMove', { angle, boosting });
-            }
+  if (saved) {
+    discordUser = JSON.parse(saved);
+    playerName = discordUser.username;
+    afterDiscordLogin();
+  } else if (token) {
+    document.getElementById('login-status').textContent = 'Fetching profile…';
+    fetch(SERVER + '/api/discord/me?token=' + token)
+      .then(r => r.json())
+      .then(u => {
+        if (!u.username) throw new Error('Bad response');
+        localStorage.setItem('discord_user', JSON.stringify(u));
+        discordUser = u;
+        playerName = u.username;
+        window.location.hash = '';
+        afterDiscordLogin();
+      })
+      .catch(() => {
+        document.getElementById('login-status').textContent = 'Login failed. Try again.';
+      });
+  }
+}
 
-            socket?.emit('updateMovement', { speedMultiplier: admin.speed, antiKill: admin.god });
+function afterDiscordLogin() {
+  // Populate menu
+  const av = document.getElementById('menu-avatar');
+  av.textContent = discordUser.username.charAt(0).toUpperCase();
+  document.getElementById('menu-username').textContent = discordUser.username;
+  document.getElementById('menu-pfid').textContent = 'PlayFab ID: connecting…';
 
-            const me = players.find(p => p.id === playerId);
-            if (me) {
-                camX = me.x - canvas.width / 2;
-                camY = me.y - canvas.height / 2;
-                scoreEl.textContent = Math.floor(me.score || 0);
-                nameEl.textContent = me.name;
-            }
+  // Init PlayFab FIRST, then show menu
+  initPlayFab(discordUser, () => show('s-menu'));
+}
 
-            render();
-            requestAnimationFrame(gameLoop);
-        }
+// ══════════════════════════════
+//  PLAYFAB — properly wired
+// ══════════════════════════════
+function initPlayFab(user, callback) {
+  const statusEl = document.getElementById('menu-pf-status');
 
-        // ==================== RENDER ====================
-        function render() {
-            const quality = document.getElementById('quality')?.value || 'high';
-            ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.save(); ctx.translate(-camX, -camY);
+  if (typeof PlayFab === 'undefined') {
+    statusEl.innerHTML = '<span style="color:var(--red)">● PlayFab SDK not loaded</span>';
+    if (callback) callback();
+    return;
+  }
 
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth = 1;
-            const gs = 100, sx = Math.floor(camX / gs) * gs, sy = Math.floor(camY / gs) * gs;
-            for (let x = sx; x < camX + canvas.width + gs; x += gs) { ctx.beginPath(); ctx.moveTo(x, camY); ctx.lineTo(x, camY + canvas.height); ctx.stroke(); }
-            for (let y = sy; y < camY + canvas.height + gs; y += gs) { ctx.beginPath(); ctx.moveTo(camX, y); ctx.lineTo(camX + canvas.width, y); ctx.stroke(); }
+  PlayFab.settings.titleId = PLAYFAB_TITLE_ID;
 
-            // Border
-            ctx.strokeStyle = '#ff4444'; ctx.lineWidth = BORDER; ctx.strokeRect(0, 0, WORLD_W, WORLD_H);
-            ctx.strokeStyle = 'rgba(255,68,68,0.3)'; ctx.lineWidth = BORDER * 2;
-            ctx.strokeRect(-BORDER/2, -BORDER/2, WORLD_W + BORDER, WORLD_H + BORDER);
+  PlayFabClientAPI.LoginWithCustomID({
+    TitleId: PLAYFAB_TITLE_ID,
+    CustomId: 'discord_' + user.id,
+    CreateAccount: true,
+    InfoRequestParameters: {
+      GetUserInventory: true,
+      GetUserData: true,
+      GetPlayerStatistics: true
+    }
+  }, function(result, error) {
+    if (error) {
+      console.error('PlayFab login error:', error);
+      statusEl.innerHTML = '<span style="color:var(--red)">● PlayFab error: ' + (error.errorMessage || 'unknown') + '</span>';
+      if (callback) callback();
+      return;
+    }
 
-            // Orbs (culled)
-            for (let o of orbs) {
-                if (o.x < camX - 50 || o.x > camX + canvas.width + 50 || o.y < camY - 50 || o.y > camY + canvas.height + 50) continue;
-                ctx.fillStyle = o.color;
-                ctx.beginPath(); ctx.arc(o.x, o.y, 7 + (quality === 'high' ? Math.sin(o.pulse || 0) * 2 : 0), 0, Math.PI * 2); ctx.fill();
-                if (quality === 'high') {
-                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-                    ctx.beginPath(); ctx.arc(o.x - 2, o.y - 2, 3, 0, Math.PI * 2); ctx.fill();
-                }
-            }
+    playfabReady = true;
+    playfabId = result.data.PlayFabId;
+    document.getElementById('menu-pfid').textContent = 'PlayFab ID: ' + playfabId;
+    statusEl.innerHTML = '<div class="status-dot"></div> PlayFab connected';
 
-            // Players
-            for (let p of players) {
-                if (!p.isAlive || !p.segments) continue;
-                const head = p.segments[0];
-                if (head.x < camX - 150 || head.x > camX + canvas.width + 150 || head.y < camY - 150 || head.y > camY + canvas.height + 150) continue;
+    // Display name sync
+    PlayFabClientAPI.UpdateUserTitleDisplayName({
+      DisplayName: user.username.slice(0, 25)
+    }, null, null);
 
-                // ESP
-                if (admin.esp && p.id !== playerId) {
-                    ctx.strokeStyle = 'yellow'; ctx.lineWidth = 1;
-                    ctx.strokeRect(head.x - 40, head.y - 40, 80, 80);
-                    ctx.fillStyle = 'yellow'; ctx.font = '12px Arial'; ctx.textAlign = 'center';
-                    ctx.fillText(p.name, head.x, head.y - 50);
-                }
+    // Load user data (tags, bans)
+    const userData = result.data.InfoResultPayload && result.data.InfoResultPayload.UserData;
+    if (userData) {
+      if (userData.banned && userData.banned.Value === 'true') {
+        localStorage.removeItem('discord_user');
+        document.getElementById('login-status').innerHTML = '🚫 <b>You are banned.</b>';
+        show('s-login');
+        return;
+      }
+      if (userData.tag && userData.tag.Value) {
+        equippedTag = userData.tag.Value;
+        equippedTagColor = (userData.tagColor && userData.tagColor.Value) || '#6c8ef5';
+        if (equippedTag === 'Z3N0') hasZ3N0 = true;
+      }
+    }
 
-                // Segments
-                for (let i = p.segments.length - 1; i >= 0; i--) {
-                    const seg = p.segments[i];
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = 1 - (i / p.segments.length) * 0.4;
-                    ctx.beginPath(); ctx.arc(seg.x, seg.y, seg.radius, 0, Math.PI * 2); ctx.fill();
-                }
-                ctx.globalAlpha = 1;
+    // Load inventory
+    loadInventory(result);
 
-                // Eyes
-                const eyeAngle = p.angle || 0, eyeOff = head.radius * 0.5;
-                ctx.fillStyle = 'white';
-                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle - 0.5) * eyeOff, head.y + Math.sin(eyeAngle - 0.5) * eyeOff, head.radius * 0.35, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle + 0.5) * eyeOff, head.y + Math.sin(eyeAngle + 0.5) * eyeOff, head.radius * 0.35, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = 'black';
-                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle - 0.5) * eyeOff + Math.cos(eyeAngle) * 3, head.y + Math.sin(eyeAngle - 0.5) * eyeOff + Math.sin(eyeAngle) * 3, head.radius * 0.2, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(head.x + Math.cos(eyeAngle + 0.5) * eyeOff + Math.cos(eyeAngle) * 3, head.y + Math.sin(eyeAngle + 0.5) * eyeOff + Math.sin(eyeAngle) * 3, head.radius * 0.2, 0, Math.PI * 2); ctx.fill();
+    if (callback) callback();
+  });
+}
 
-                // Name & tag
-                ctx.fillStyle = 'white'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
-                ctx.fillText(p.name, head.x, head.y - head.radius - 15);
-                if (p.tag) {
-                    ctx.fillStyle = p.tagColor || '#fff'; ctx.font = 'bold 11px Arial';
-                    ctx.fillText(`[${p.tag}]`, head.x, head.y - head.radius - 30);
-                }
-                // Highlight own player
-                if (p.id === playerId) {
-                    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 3;
-                    ctx.beginPath(); ctx.arc(head.x, head.y, head.radius + 5, 0, Math.PI * 2); ctx.stroke();
-                }
-            }
+// ══════════════════════════════
+//  INVENTORY
+// ══════════════════════════════
+const ITEM_ICONS = {
+  'Z3N0Tag':'⚡','QuadTag':'🔷','ShadowTag':'🌑','PingioTag':'🏓',
+  'GoldSkin':'✨','RainbowSkin':'🌈','NeonSkin':'💜','SpeedBoost':'💨',
+  'GodMode':'🛡️','default':'📦'
+};
 
-            // 3D View effect
-            if (admin.view3D) {
-                ctx.fillStyle = 'rgba(0,0,0,0.4)';
-                ctx.fillRect(camX, camY + canvas.height * 0.7, canvas.width, canvas.height * 0.3);
-                for (let p of players) {
-                    if (!p.isAlive || !p.segments) continue;
-                    const head = p.segments[0];
-                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                    ctx.beginPath(); ctx.ellipse(head.x, head.y + 15, head.radius, head.radius * 0.2, 0, 0, Math.PI * 2); ctx.fill();
-                }
-            }
+let inventoryItems = [];
 
-            ctx.restore();
+function loadInventory(loginResult) {
+  const inv = loginResult.data.InfoResultPayload && loginResult.data.InfoResultPayload.UserInventory;
+  inventoryItems = inv || [];
+  renderInventory();
+}
 
-            // Crosshair
-            if (movement === 'mouse') {
-                ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1;
-                ctx.beginPath(); ctx.arc(mouseX, mouseY, 10, 0, Math.PI * 2); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(mouseX - 15, mouseY); ctx.lineTo(mouseX + 15, mouseY); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(mouseX, mouseY - 15); ctx.lineTo(mouseX, mouseY + 15); ctx.stroke();
-            }
-        }
+function renderInventory() {
+  const grid = document.getElementById('inv-grid');
+  const sub  = document.getElementById('inv-sub');
 
-        // ==================== UI UPDATES ====================
-        function updateUI() {
-            const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10);
-            lbList.innerHTML = sorted.map((p, i) => `<li>${p.name} <span>${Math.floor(p.score || 0)}</span></li>`).join('');
+  if (!playfabReady) {
+    grid.innerHTML = '<div class="inv-empty">PlayFab not connected</div>';
+    return;
+  }
 
-            playerListEl.innerHTML = players.map(p => `
-                <div style="background:#1a1a24;padding:10px;margin:5px 0;border-radius:8px;">
-                    <strong>${p.name}</strong> ${p.tag ? `[${p.tag}]` : ''} — ${Math.floor(p.score || 0)}
-                    ${p.id !== playerId ? `
-                    <div style="margin-top:5px;">
-                        <button class="action-btn tp" onclick="adminAction('${p.id}','teleportTo')">📍 TP</button>
-                        <button class="action-btn br" onclick="adminAction('${p.id}','bringHere')">🔄 Bring</button>
-                        <button class="action-btn kk" onclick="adminAction('${p.id}','kick')">🚫 Kick</button>
-                        <button class="action-btn kl" onclick="adminAction('${p.id}','kill')">💀 Kill</button>
-                        <button class="action-btn sz" onclick="adminAction('${p.id}','giveSize')">📏 +Size</button>
-                    </div>` : '<small>(You)</small>'}
-                </div>
-            `).join('');
-        }
+  if (inventoryItems.length === 0) {
+    sub.textContent = '0 items';
+    grid.innerHTML = '<div class="inv-empty">No items yet. Items granted by admins appear here.</div>';
+    return;
+  }
 
-        function adminAction(targetId, action) {
-            socket?.emit('adminAction', { targetId, action });
-            notifMsg(`Admin: ${action}`);
-        }
+  sub.textContent = inventoryItems.length + ' item' + (inventoryItems.length !== 1 ? 's' : '');
+  grid.innerHTML = inventoryItems.map(item => {
+    const icon = ITEM_ICONS[item.ItemId] || ITEM_ICONS['default'];
+    const isEquipped = equippedTag && item.ItemId.includes(equippedTag);
+    return `
+      <div class="inv-item${isEquipped?' equipped':''}">
+        <div class="inv-icon">${icon}</div>
+        <div class="inv-name">${h(item.DisplayName || item.ItemId)}</div>
+        <button class="inv-equip ${isEquipped?'on':'off'}" onclick="equipItem('${h(item.ItemId)}','${h(item.DisplayName||item.ItemId)}')">
+          ${isEquipped ? 'Equipped' : 'Equip'}
+        </button>
+      </div>`;
+  }).join('');
+}
 
-        function notifMsg(msg) {
-            notif.textContent = msg;
-            notif.classList.add('show');
-            setTimeout(() => notif.classList.remove('show'), 3000);
-        }
+function equipItem(itemId, displayName) {
+  if (!playfabReady) { toast('PlayFab not ready'); return; }
 
-        // ==================== EVENT LISTENERS ====================
-        document.getElementById('movement').addEventListener('change', e => movement = e.target.value);
-        document.getElementById('speed').addEventListener('input', e => {
-            admin.speed = parseFloat(e.target.value);
-            document.getElementById('speed-val').textContent = admin.speed.toFixed(1) + 'x';
-        });
-        document.getElementById('esp').addEventListener('change', e => admin.esp = e.target.checked);
-        document.getElementById('3dview').addEventListener('change', e => admin.view3D = e.target.checked);
-        document.getElementById('god').addEventListener('change', e => {
-            admin.god = e.target.checked;
-            notifMsg(e.target.checked ? 'God Mode ON' : 'God Mode OFF');
-        });
-        document.getElementById('giveself').addEventListener('click', () => {
-            socket?.emit('adminAction', { targetId: playerId, action: 'giveSize' });
-            notifMsg('Gave yourself size');
-        });
+  // Determine tag from item ID
+  let tag = '', color = '#6c8ef5';
+  if (itemId === 'Z3N0Tag')    { tag = 'Z3N0';   color = '#f56565'; }
+  else if (itemId === 'QuadTag')   { tag = 'Quad';   color = '#3ecf8e'; }
+  else if (itemId === 'ShadowTag') { tag = 'Shadow'; color = '#b794f4'; }
+  else if (itemId === 'PingioTag') { tag = 'Pingio'; color = '#f6ad55'; }
+  else { tag = displayName; color = '#6c8ef5'; }
 
-        // Tag application
-        document.querySelectorAll('.apply-tag').forEach(btn => btn.addEventListener('click', () => {
-            const tag = btn.dataset.tag;
-            const color = document.getElementById(`tag-${tag.toLowerCase()}`).value;
-            socket?.emit('updateTag', { tag, tagColor: color });
-                            if (playfabReady && sessionTicket) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
-        }));
-        document.getElementById('apply-custom').addEventListener('click', () => {
-            const tag = document.getElementById('custom-tag').value;
-            const color = document.getElementById('custom-color').value;
-            if (tag) {
-                socket?.emit('updateTag', { tag, tagColor: color });
-                            if (playfabReady && sessionTicket) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
-            }
-        });
+  equippedTag = tag; equippedTagColor = color;
+  if (tag === 'Z3N0') hasZ3N0 = true;
 
-        // Panel toggles
-        document.getElementById('lb-btn').addEventListener('click', () => document.getElementById('lb-panel').classList.toggle('hidden'));
-        document.getElementById('close-lb').addEventListener('click', () => document.getElementById('lb-panel').classList.add('hidden'));
-        document.getElementById('admin-btn').addEventListener('click', () => {
-            if (!hasZ3N0) { notifMsg('🔒 You need the Z3N0 tag to access the admin panel'); return; }
-            document.getElementById('admin-panel').classList.toggle('hidden');
-        });
-        document.getElementById('settings-btn')?.addEventListener('click', () => document.getElementById('settings-panel').classList.toggle('hidden'));
-        document.getElementById('close-settings').addEventListener('click', () => document.getElementById('settings-panel').classList.add('hidden'));
+  applyTag(tag, color);
+  renderInventory();
+  toast('Equipped: ' + displayName);
+}
 
-        // Admin tabs
-        document.querySelectorAll('.admin-tab').forEach(tab => tab.addEventListener('click', () => {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(`admin-${tab.dataset.tab}`).classList.add('active');
-        }));
+// ══════════════════════════════
+//  PLAY BUTTON
+// ══════════════════════════════
+document.getElementById('btn-play').onclick = () => {
+  show('s-game');
+  connectServer();
+  requestAnimationFrame(gameLoop);
+};
 
-        // Escape to close panels
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') document.querySelectorAll('.ui-panel').forEach(p => p.classList.add('hidden'));
-        });
+document.getElementById('btn-menu-back').onclick = () => {
+  if (socket) { socket.disconnect(); socket = null; }
+  predicting = false; players = []; orbs = [];
+  show('s-menu');
+};
 
-        // ==================== START ====================
-        checkLogin();
-        requestAnimationFrame(gameLoop);
-    </script>
+document.getElementById('btn-inventory-toggle').onclick = () => {
+  const sec = document.getElementById('menu-inventory-section');
+  sec.style.display = sec.style.display === 'none' ? 'flex' : 'none';
+  if (sec.style.display === 'flex') {
+    sec.style.flexDirection = 'column';
+    // Refresh inventory from PlayFab
+    if (playfabReady) {
+      PlayFabClientAPI.GetUserInventory({}, function(r, e) {
+        if (r) { inventoryItems = r.data.Inventory || []; renderInventory(); }
+      });
+    }
+  }
+};
+
+// ══════════════════════════════
+//  SERVER
+// ══════════════════════════════
+function connectServer() {
+  if (socket) socket.disconnect();
+  socket = io(SERVER, { transports: ['websocket'], reconnectionDelay: 1000 });
+
+  socket.on('connect', () => {
+    socket.emit('join', { name: playerName });
+    // Restore tag after connect
+    if (equippedTag) socket.emit('updateTag', { tag: equippedTag, tagColor: equippedTagColor });
+    toast('Connected');
+    predicting = true;
+  });
+
+  socket.on('playerId', id => {
+    playerId = id;
+    document.getElementById('l-name').value = playerName;
+  });
+
+  socket.on('gameState', state => {
+    orbs = state.orbs;
+    const me = state.players.find(p => p.id === playerId);
+    if (me) {
+      // Reconcile: nudge local prediction toward authoritative
+      lx += (me.x - lx) * 0.08;
+      ly += (me.y - ly) * 0.08;
+      snakeSpeed = me.speed || 3;
+      document.getElementById('hud-score').textContent = Math.floor(me.score || 0);
+      document.getElementById('hud-name').textContent = me.name;
+    }
+    players = state.players;
+    updateLb();
+    if (!document.getElementById('p-admin').classList.contains('hidden')) updatePlayerList();
+  });
+
+  socket.on('playerDied', () => {
+    predicting = false;
+    deathEl.classList.add('show');
+    setTimeout(() => deathEl.classList.remove('show'), 2500);
+  });
+  socket.on('playerRespawned', () => { predicting = true; toast('Respawned'); });
+  socket.on('kicked', () => { toast('You were kicked'); setTimeout(() => location.reload(), 2000); });
+  socket.on('disconnect', () => { predicting = false; toast('Disconnected'); });
+  socket.on('connect_error', () => toast('Server unreachable'));
+}
+
+// ══════════════════════════════
+//  INPUT
+// ══════════════════════════════
+canvas.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+document.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if (e.key === ' ' && !boosting) { boosting = true; socket?.emit('boosting', true); }
+  if (e.key === 'Escape') document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+});
+document.addEventListener('keyup', e => {
+  keys[e.key.toLowerCase()] = false;
+  if (e.key === ' ') { boosting = false; socket?.emit('boosting', false); }
+});
+
+// ══════════════════════════════
+//  GAME LOOP
+// ══════════════════════════════
+let lastSend = 0;
+
+function getWasdAngle() {
+  const up = keys['w'] || keys['arrowup'];
+  const dn = keys['s'] || keys['arrowdown'];
+  const lt = keys['a'] || keys['arrowleft'];
+  const rt = keys['d'] || keys['arrowright'];
+  if (up && lt) return -Math.PI * 3/4;
+  if (up && rt) return -Math.PI / 4;
+  if (dn && lt) return  Math.PI * 3/4;
+  if (dn && rt) return  Math.PI / 4;
+  if (up) return -Math.PI / 2;
+  if (dn) return  Math.PI / 2;
+  if (lt) return  Math.PI;
+  if (rt) return  0;
+  return null;
+}
+
+function gameLoop(ts) {
+  // FPS
+  fpsCount++;
+  if (ts - fpsLast >= 1000) {
+    currentFps = fpsCount; fpsCount = 0; fpsLast = ts;
+    const el = document.getElementById('fps-ctr');
+    el.textContent = currentFps + ' FPS';
+    el.style.color = currentFps >= 55 ? '#3ecf8e' : currentFps >= 30 ? '#f6ad55' : '#f56565';
+  }
+
+  // ── Client prediction runs every frame ──
+  if (predicting && playerId) {
+    let targetAngle = langle;
+
+    if (movementMode === 'mouse') {
+      targetAngle = Math.atan2(mouseY - canvas.height/2, mouseX - canvas.width/2);
+    } else {
+      const wa = getWasdAngle();
+      if (wa !== null) targetAngle = wa;
+    }
+
+    // Smooth turn (mirrors server logic exactly)
+    let diff = targetAngle - langle;
+    while (diff >  Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    langle += diff * 0.15;
+
+    const spd = (boosting ? snakeSpeed * 1.8 : snakeSpeed) * admin.speed;
+    lx = Math.max(BORDER, Math.min(WORLD_W - BORDER, lx + Math.cos(langle) * spd));
+    ly = Math.max(BORDER, Math.min(WORLD_H - BORDER, ly + Math.sin(langle) * spd));
+  }
+
+  // Smooth camera lerp
+  camTX = lx - canvas.width/2;
+  camTY = ly - canvas.height/2;
+  camX += (camTX - camX) * 0.1;
+  camY += (camTY - camY) * 0.1;
+
+  // Network send — 30hz
+  if (ts - lastSend >= 33 && socket?.connected && playerId) {
+    lastSend = ts;
+    if (movementMode === 'mouse') {
+      socket.emit('mouseMove', { x: lx + (mouseX - canvas.width/2), y: ly + (mouseY - canvas.height/2) });
+    } else {
+      const wa = getWasdAngle();
+      if (wa !== null) socket.emit('keyMove', { angle: wa, boosting });
+    }
+    socket.emit('updateMovement', { speedMultiplier: admin.speed, antiKill: admin.god });
+  }
+
+  render(ts);
+  requestAnimationFrame(gameLoop);
+}
+
+// ══════════════════════════════
+//  RENDER
+// ══════════════════════════════
+function render(ts) {
+  const q = document.getElementById('set-quality')?.value || 'high';
+  const cx = Math.round(camX), cy = Math.round(camY);
+
+  ctx.fillStyle = '#0c0e14';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.translate(-cx, -cy);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+  ctx.lineWidth = 1;
+  const gs = 80, sx = Math.floor(cx/gs)*gs, sy = Math.floor(cy/gs)*gs;
+  ctx.beginPath();
+  for (let x = sx; x < cx+canvas.width+gs; x+=gs) { ctx.moveTo(x,cy); ctx.lineTo(x,cy+canvas.height); }
+  for (let y = sy; y < cy+canvas.height+gs; y+=gs) { ctx.moveTo(cx,y); ctx.lineTo(cx+canvas.width,y); }
+  ctx.stroke();
+
+  // Border
+  ctx.strokeStyle = 'rgba(108,142,245,0.15)'; ctx.lineWidth = 40;
+  ctx.strokeRect(-10,-10,WORLD_W+20,WORLD_H+20);
+  ctx.strokeStyle = '#6c8ef5'; ctx.lineWidth = 2;
+  ctx.strokeRect(0,0,WORLD_W,WORLD_H);
+
+  // Orbs
+  const cull = 100;
+  for (const o of orbs) {
+    if (o.x < cx-cull || o.x > cx+canvas.width+cull || o.y < cy-cull || o.y > cy+canvas.height+cull) continue;
+    const r = 7 + (q==='high' ? Math.sin((o.pulse||0)) * 1.5 : 0);
+    if (q==='high') {
+      const g = ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,r*2.5);
+      g.addColorStop(0,o.color); g.addColorStop(1,'transparent');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(o.x,o.y,r*2.5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle = o.color; ctx.beginPath(); ctx.arc(o.x,o.y,r,0,Math.PI*2); ctx.fill();
+    if (q==='high') {
+      ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.beginPath();
+      ctx.arc(o.x-r*.28,o.y-r*.28,r*.35,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  // Snakes
+  for (const p of players) {
+    if (!p.isAlive || !p.segments?.length) continue;
+    const isMe = p.id === playerId;
+    const head0 = p.segments[0];
+    if (head0.x < cx-200 || head0.x > cx+canvas.width+200 || head0.y < cy-200 || head0.y > cy+canvas.height+200) continue;
+
+    // Use predicted head for own snake
+    const drawHead = isMe ? { x: lx, y: ly } : head0;
+    const drawAngle = isMe ? langle : (p.angle || 0);
+
+    // ESP
+    if (admin.esp && !isMe) {
+      const er = (head0.radius||20)+28;
+      ctx.strokeStyle='#f0e040'; ctx.lineWidth=1.2;
+      ctx.strokeRect(head0.x-er,head0.y-er,er*2,er*2);
+      ctx.fillStyle='#f0e040'; ctx.font='bold 10px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText(p.name+' ['+Math.floor(p.score)+']',head0.x,head0.y-er-3);
+    }
+
+    // Segments back→front
+    for (let i = p.segments.length-1; i >= 0; i--) {
+      const seg = p.segments[i];
+      const sx2 = isMe && i===0 ? lx : seg.x;
+      const sy2 = isMe && i===0 ? ly : seg.y;
+      const r = seg.radius || Math.max(5, 20 - i*0.7);
+      ctx.globalAlpha = 1 - (i/p.segments.length)*0.35;
+      ctx.fillStyle = p.color;
+      if (isMe && i===0 && q==='high') { ctx.shadowColor=p.color; ctx.shadowBlur=14; }
+      ctx.beginPath(); ctx.arc(sx2,sy2,r,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+    }
+    ctx.globalAlpha=1;
+
+    const hr = head0.radius||20;
+    const hx2 = drawHead.x, hy2 = drawHead.y;
+    const ea = drawAngle, eo = hr*.46;
+
+    // Eyes whites
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea-.5)*eo,hy2+Math.sin(ea-.5)*eo,hr*.3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea+.5)*eo,hy2+Math.sin(ea+.5)*eo,hr*.3,0,Math.PI*2); ctx.fill();
+    // Pupils
+    ctx.fillStyle='#111';
+    const pd=hr*.12;
+    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea-.5)*eo+Math.cos(ea)*pd,hy2+Math.sin(ea-.5)*eo+Math.sin(ea)*pd,hr*.16,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea+.5)*eo+Math.cos(ea)*pd,hy2+Math.sin(ea+.5)*eo+Math.sin(ea)*pd,hr*.16,0,Math.PI*2); ctx.fill();
+
+    // Name + tag
+    ctx.textAlign='center'; ctx.shadowColor='rgba(0,0,0,0.8)'; ctx.shadowBlur=4;
+    if (p.tag) {
+      ctx.fillStyle=p.tagColor||'#6c8ef5'; ctx.font='bold 10px Segoe UI';
+      ctx.fillText('['+p.tag+']',hx2,hy2-hr-22);
+    }
+    ctx.fillStyle='#fff'; ctx.font='bold 13px Segoe UI';
+    ctx.fillText(p.name,hx2,hy2-hr-10);
+    ctx.shadowBlur=0;
+
+    // Own ring
+    if (isMe) {
+      ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(hx2,hy2,hr+6,0,Math.PI*2); ctx.stroke();
+    }
+  }
+
+  // 3D overlay
+  if (admin.view3D) {
+    ctx.fillStyle='rgba(0,0,0,0.3)';
+    ctx.fillRect(cx,cy+canvas.height*.72,canvas.width,canvas.height*.28);
+    for (const p of players) {
+      if (!p.isAlive||!p.segments) continue;
+      const h2=p.segments[0], r2=h2.radius||20;
+      ctx.fillStyle='rgba(0,0,0,0.18)'; ctx.beginPath();
+      ctx.ellipse(h2.x,h2.y+r2+8,r2*.85,r2*.15,0,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  ctx.restore();
+
+  // Crosshair
+  if (movementMode==='mouse') {
+    ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(mouseX,mouseY,8,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mouseX-13,mouseY); ctx.lineTo(mouseX+13,mouseY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mouseX,mouseY-13); ctx.lineTo(mouseX,mouseY+13); ctx.stroke();
+  }
+}
+
+// ══════════════════════════════
+//  UI
+// ══════════════════════════════
+function updateLb() {
+  lbListEl.innerHTML = [...players].sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,10).map((p,i)=>`
+    <li class="lb-li">
+      <span class="lb-rank">${i+1}</span>
+      <span class="lb-name">${h(p.name)}${p.tag?` <span style="color:${p.tagColor||'#6c8ef5'};font-size:.7rem">[${h(p.tag)}]</span>`:''}</span>
+      <span class="lb-pts">${Math.floor(p.score||0)}</span>
+    </li>`).join('');
+}
+
+function updatePlayerList() {
+  plListEl.innerHTML = players.map(p => {
+    const isMe = p.id === playerId;
+    const open = expandedPCard === p.id;
+    return `<div class="pcard${open?' open':''}" onclick="togglePCard('${p.id}')">
+      <div class="pc-head">
+        <div>
+          <span class="pc-name">${h(p.name)}</span>
+          ${p.tag?`<span style="font-size:.7rem;font-weight:600;color:${p.tagColor||'#6c8ef5'};margin-left:5px">[${h(p.tag)}]</span>`:''}
+          ${isMe?'<span style="font-size:.7rem;color:var(--accent);margin-left:5px">(you)</span>':''}
+        </div>
+        <span class="pc-pts">${Math.floor(p.score||0)} pts</span>
+      </div>
+      ${open&&!isMe?`<div class="pc-actions">
+        <button class="ab ab-blue"   onclick="doAdmin(event,'${p.id}','teleportTo')">📍 TP To</button>
+        <button class="ab ab-purple" onclick="doAdmin(event,'${p.id}','bringHere')">🔄 Bring</button>
+        <button class="ab ab-yellow" onclick="doAdmin(event,'${p.id}','kick')">🚫 Kick</button>
+        <button class="ab ab-red"    onclick="doAdmin(event,'${p.id}','kill')">💀 Kill</button>
+        <button class="ab ab-green"  onclick="doAdmin(event,'${p.id}','giveSize')">📏 +Size</button>
+        <button class="ab ab-ban"    onclick="doBan(event,'${p.id}','${h(p.name)}')">🔨 Ban</button>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function togglePCard(id) { expandedPCard = expandedPCard===id?null:id; updatePlayerList(); }
+function doAdmin(e,tid,action) { e.stopPropagation(); socket?.emit('adminAction',{targetId:tid,action}); toast('Done: '+action); }
+function doBan(e,tid,name) {
+  e.stopPropagation();
+  if (!playfabReady) { toast('PlayFab not ready'); return; }
+  if (!confirm('Ban '+name+'?')) return;
+  socket?.emit('adminAction',{targetId:tid,action:'kick'});
+  // In a real setup you'd call a Cloud Script here to set banned=true on their account
+  toast('🔨 '+name+' banned (kicked)');
+}
+
+function applyTag(tag, tagColor) {
+  socket?.emit('updateTag',{tag,tagColor});
+  if (playfabReady) {
+    PlayFabClientAPI.UpdateUserData({Data:{tag,tagColor}},null,null);
+    if (tag==='Z3N0') hasZ3N0=true;
+  }
+  equippedTag=tag; equippedTagColor=tagColor;
+  toast(tag?'Tag: ['+tag+']':'Tag cleared');
+}
+
+function h(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════
+//  EVENT WIRING
+// ══════════════════════════════
+// Panel close buttons
+document.querySelectorAll('[data-close]').forEach(b =>
+  b.onclick = () => document.getElementById(b.dataset.close).classList.add('hidden'));
+
+// HUD buttons
+document.getElementById('btn-lb').onclick       = () => document.getElementById('p-lb').classList.toggle('hidden');
+document.getElementById('btn-settings').onclick = () => document.getElementById('p-settings').classList.toggle('hidden');
+document.getElementById('btn-admin').onclick    = () => {
+  if (!hasZ3N0) { toast('🔒 Z3N0 tag required'); return; }
+  const p = document.getElementById('p-admin');
+  p.classList.toggle('hidden');
+  if (!p.classList.contains('hidden')) updatePlayerList();
+};
+
+// Settings
+document.getElementById('set-movement').onchange = e => movementMode = e.target.value;
+
+// Local tab
+document.getElementById('l-speed').oninput = e => {
+  admin.speed = parseFloat(e.target.value);
+  document.getElementById('l-speed-v').textContent = admin.speed.toFixed(1)+'×';
+};
+document.getElementById('l-esp').onchange   = e => admin.esp    = e.target.checked;
+document.getElementById('l-3d').onchange    = e => admin.view3D = e.target.checked;
+document.getElementById('l-god').onchange   = e => { admin.god = e.target.checked; toast(e.target.checked?'🛡️ God Mode ON':'God Mode OFF'); };
+document.getElementById('l-giveself').onclick = () => { socket?.emit('adminAction',{targetId:playerId,action:'giveSize'}); toast('+Size'); };
+document.getElementById('l-apply-name').onclick = () => {
+  const n = document.getElementById('l-name').value.trim();
+  if (!n) return;
+  playerName = n;
+  document.getElementById('hud-name').textContent = n;
+  socket?.emit('join',{name:n});
+  toast('Name updated');
+};
+
+// Tag presets
+document.querySelectorAll('.ptag').forEach(b => b.onclick = () => {
+  const tag = b.dataset.tag;
+  const color = document.getElementById('tc-'+tag.toLowerCase()).value;
+  applyTag(tag,color);
+});
+document.getElementById('tc-apply-custom').onclick = () => {
+  const tag   = document.getElementById('tc-custom').value.trim();
+  const color = document.getElementById('tc-custom-color').value;
+  if (tag) applyTag(tag,color);
+};
+document.getElementById('tc-clear').onclick = () => applyTag('','');
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.tc').forEach(x => x.classList.remove('on'));
+  t.classList.add('on');
+  document.getElementById(t.dataset.tab).classList.add('on');
+});
+
+// ══════════════════════════════
+//  BOOT
+// ══════════════════════════════
+checkDiscordLogin();
+</script>
 </body>
 </html>

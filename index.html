@@ -751,34 +751,17 @@
             loginStatus.textContent = 'Logging in...';
             loginStatus.style.color = '#7289da';
             
-            const data = new URLSearchParams();
-            data.append('client_id', DISCORD_CLIENT_ID);
-            data.append('client_secret', 'YOUR_SECRET'); // Replace
-            data.append('grant_type', 'authorization_code');
-            data.append('code', code);
-            data.append('redirect_uri', DISCORD_REDIRECT_URI);
-            
-            fetch('${CONFIG.SERVER_URL}/api/discord/login?code=${code}'', {
-                method: 'POST',
-                body: data,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-            .then(res => res.json())
-            .then(tokenData => {
-                if (tokenData.access_token) {
-                    return fetch('https://discord.com/api/users/@me', {
-                        headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
-                    });
-                } else {
-                    throw new Error('No access token');
-                }
-            })
+            fetch("https://slither-game-server-ultm.onrender.com/api/discord/login?code=" + code)
             .then(res => res.json())
             .then(user => {
-                localStorage.setItem('discord_user', JSON.stringify(user));
-                playerName = user.username;
-                window.history.replaceState({}, document.title, window.location.pathname);
-                showLoggedInState(user);
+                if (user.username) {
+                    localStorage.setItem('discord_user', JSON.stringify(user));
+                    playerName = user.username;
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    showLoggedInState(user);
+                } else {
+                    throw new Error('Login failed');
+                }
             })
             .catch(error => {
                 console.error('Discord login error:', error);
@@ -786,9 +769,8 @@
                 loginStatus.style.color = '#ff4444';
             });
         }
-        
         document.getElementById('discord-login-btn').addEventListener('click', () => {
-            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=token&scope=identify`;
+            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=identify`;
             window.open(authUrl, "_blank");
         });
         

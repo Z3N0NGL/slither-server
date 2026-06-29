@@ -317,3 +317,71 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log(`🌐 Network: http://100.115.92.206:${PORT}`);
     console.log('👥 Waiting for players to connect...');
 });
+
+// Discord OAuth Proxy
+const fetch = require('node-fetch');
+
+app.get('/api/discord/login', (req, res) => {
+    const DISCORD_CLIENT_ID = '1521216585292058734';
+    const DISCORD_REDIRECT_URI = 'https://z3n0tbh.itch.io/pingio';
+    const DISCORD_SECRET = 'pnauu7mRFl9h8RRqHqR_1B0oeKU2uIfH';
+    
+    const { code } = req.query;
+    if (!code) return res.status(400).json({ error: 'No code' });
+    
+    const params = new URLSearchParams();
+    params.append('client_id', DISCORD_CLIENT_ID);
+    params.append('client_secret', DISCORD_SECRET);
+    params.append('grant_type', 'authorization_code');
+    params.append('code', code);
+    params.append('redirect_uri', DISCORD_REDIRECT_URI);
+    
+    fetch('https://discord.com/api/oauth2/token', {
+        method: 'POST',
+        body: params,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.access_token) {
+            return fetch('https://discord.com/api/users/@me', {
+                headers: { 'Authorization': `Bearer ${data.access_token}` }
+            }).then(r => r.json());
+        }
+        throw new Error('No token');
+    })
+    .then(user => res.json(user))
+    .catch(err => res.status(500).json({ error: err.message }));
+});
+
+// Discord OAuth Proxy
+app.get('/api/discord/login', async (req, res) => {
+    const { code } = req.query;
+    if (!code) return res.status(400).json({ error: 'No code' });
+    
+    try {
+        const params = new URLSearchParams();
+        params.append('client_id', '1521216585292058734');
+        params.append('client_secret', 'pnauu7mRFl9h8RRqHqR_1B0oeKU2uIfH');
+        params.append('grant_type', 'authorization_code');
+        params.append('code', code);
+        params.append('redirect_uri', 'https://z3n0tbh.itch.io/pingio');
+        
+        const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
+            method: 'POST',
+            body: params,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        const tokenData = await tokenRes.json();
+        
+        if (!tokenData.access_token) throw new Error('No token');
+        
+        const userRes = await fetch('https://discord.com/api/users/@me', {
+            headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
+        });
+        const user = await userRes.json();
+        res.json(user);
+    } catch(e) {
+        res.status(500).json({ error: e.message });
+    }
+});

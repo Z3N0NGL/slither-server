@@ -681,9 +681,6 @@
         let gamePlayers = [];
         let hasZ3N0Tag = false;
         let playfabReady = false;
-        let hasZ3N0Tag = false;
-        let playfabReady = false;
-        let hasZ3N0Tag = false;
         let gameOrbs = [];
         let worldWidth = CONFIG.WORLD_WIDTH;
         let worldHeight = CONFIG.WORLD_HEIGHT;
@@ -742,8 +739,6 @@
                 const user = JSON.parse(savedUser);
                 playerName = user.username;
                 showLoggedInState(user);
-                initPlayFab(user);
-                initPlayFab(user);
             } else if (accessToken) {
                 fetch("https://discord.com/api/users/@me", {
                     headers: { Authorization: "Bearer " + accessToken }
@@ -752,8 +747,6 @@
                     playerName = user.username;
                     window.location.hash = "";
                     showLoggedInState(user);
-                initPlayFab(user);
-                initPlayFab(user);
                 }).catch(() => {
                     loginStatus.textContent = "Login failed";
                 });

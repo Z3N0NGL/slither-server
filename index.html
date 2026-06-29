@@ -188,7 +188,7 @@
         }
 
         document.getElementById('login-btn').addEventListener('click', () => {
-            window.top.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+            window.top.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify`;
         });
         unlinkBtn.addEventListener('click', () => {
             localStorage.removeItem('discord_user');

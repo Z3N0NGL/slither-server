@@ -319,7 +319,6 @@ server.listen(PORT, '0.0.0.0', () => {
 });
 
 // Discord OAuth Proxy
-const fetch = require('node-fetch');
 
 app.get('/api/discord/login', (req, res) => {
     const DISCORD_CLIENT_ID = '1521216585292058734';

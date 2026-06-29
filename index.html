@@ -745,17 +745,6 @@
                 });
             }
         }
-                exchangeCodeForToken(pendingCode);
-            }
-            
-            setInterval(() => {
-                const checkCode = localStorage.getItem('pending_discord_code');
-                if (checkCode && !savedUser) {
-                    localStorage.removeItem('pending_discord_code');
-                    exchangeCodeForToken(checkCode);
-                }
-            }, 1000);
-        }
         
         function showLoggedInState(user) {
             loginStatus.innerHTML = `<div class="welcome-back">✅ Logged in as <strong>${user.username}</strong></div>`;

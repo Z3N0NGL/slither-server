@@ -657,6 +657,7 @@
         <div id="notification"></div>
     </div>
 
+    <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script>
         // ==================== CONFIGURATION ====================
@@ -727,6 +728,14 @@
 
         // ==================== DISCORD OAUTH ====================
         function checkDiscordLogin() {
+        function loginWithPlayFab(user) {
+            if(typeof PlayFab !== "undefined") {
+                PlayFab.settings.titleId = CONFIG.PLAYFAB_TITLE_ID;
+                PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {
+                    console.log("PlayFab ready");
+                }, err => console.log("PlayFab skipped"));
+            }
+        }
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
             const accessToken = params.get('access_token');
@@ -736,6 +745,7 @@
                 const user = JSON.parse(savedUser);
                 playerName = user.username;
                 showLoggedInState(user);
+                loginWithPlayFab(user);
             } else if (accessToken) {
                 fetch('https://discord.com/api/users/@me', {
                     headers: { 'Authorization': 'Bearer ' + accessToken }
@@ -746,6 +756,7 @@
                     playerName = user.username;
                     window.location.hash = '';
                     showLoggedInState(user);
+                loginWithPlayFab(user);
                 });
             }
         }
@@ -773,6 +784,7 @@
                     playerName = user.username;
                     window.history.replaceState({}, document.title, window.location.pathname);
                     showLoggedInState(user);
+                loginWithPlayFab(user);
                 } else {
                     throw new Error('Login failed');
                 }
@@ -985,7 +997,7 @@
             ctx.strokeRect(-CONFIG.BORDER_SIZE/2, -CONFIG.BORDER_SIZE/2, worldWidth + CONFIG.BORDER_SIZE, worldHeight + CONFIG.BORDER_SIZE);
             
             // Draw orbs
-            gameOrbs.forEach(orb => {
+            gameOrbs.forEach(orb => { if(orb.x < cameraX-50 || orb.x > cameraX+canvas.width+50 || orb.y < cameraY-50 || orb.y > cameraY+canvas.height+50) return;
                 if (quality !== 'low') {
                     const gradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.radius * 3);
                     gradient.addColorStop(0, orb.color);
@@ -1013,7 +1025,7 @@
             });
             
             // Draw players
-            gamePlayers.forEach(player => {
+            gamePlayers.forEach(player => { if(!player.segments || !player.segments[0]) return; const h = player.segments[0]; if(h.x < cameraX-150 || h.x > cameraX+canvas.width+150 || h.y < cameraY-150 || h.y > cameraY+canvas.height+150) return;
                 if (!player.isAlive) return;
                 const isLocalPlayer = player.id === playerId;
                 
@@ -1122,7 +1134,7 @@
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
                 ctx.fillRect(cameraX, cameraY + canvas.height * 0.7, canvas.width, canvas.height * 0.3);
                 
-                gamePlayers.forEach(player => {
+                gamePlayers.forEach(player => { if(!player.segments || !player.segments[0]) return; const h = player.segments[0]; if(h.x < cameraX-150 || h.x > cameraX+canvas.width+150 || h.y < cameraY-150 || h.y > cameraY+canvas.height+150) return;
                     if (!player.isAlive || !player.segments) return;
                     const head = player.segments[0];
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';

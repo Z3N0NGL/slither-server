@@ -789,7 +789,7 @@
         
         document.getElementById('discord-login-btn').addEventListener('click', () => {
             const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=token&scope=identify`;
-            const popup = window.open(authUrl, 'Discord', 'width=500,height=700'); const check = setInterval(() => { try { if (popup.closed) { clearInterval(check); document.getElementById('login-status').textContent = 'Login cancelled'; } if (popup.location.href.includes('access_token=')) { const t = new URLSearchParams(popup.location.hash.substring(1)).get('access_token'); if (t) { clearInterval(check); popup.close(); fetchDiscordUser(t); } } } catch(e) {} }, 500);
+            window.open(authUrl, "_blank");
         });
         
         unlinkBtn.addEventListener('click', () => {

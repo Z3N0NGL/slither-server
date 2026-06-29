@@ -726,14 +726,27 @@
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
             const savedUser = localStorage.getItem('discord_user');
+            const pendingCode = localStorage.getItem('pending_discord_code');
             
             if (savedUser) {
                 const user = JSON.parse(savedUser);
                 playerName = user.username;
                 showLoggedInState(user);
             } else if (code) {
-                exchangeCodeForToken(code);
+                localStorage.setItem('pending_discord_code', code);
+                window.close();
+            } else if (pendingCode) {
+                localStorage.removeItem('pending_discord_code');
+                exchangeCodeForToken(pendingCode);
             }
+            
+            setInterval(() => {
+                const checkCode = localStorage.getItem('pending_discord_code');
+                if (checkCode && !savedUser) {
+                    localStorage.removeItem('pending_discord_code');
+                    exchangeCodeForToken(checkCode);
+                }
+            }, 1000);
         }
         
         function showLoggedInState(user) {

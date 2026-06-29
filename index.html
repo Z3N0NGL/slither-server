@@ -342,7 +342,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   </div>
 </div>
 
-<script src="https://download.playfab.com/PlayFabClientApi.js"></script>
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <script>
 // ══════════════════════════════
@@ -368,6 +367,7 @@ let admin = { speed: 1, esp: false, view3D: false, god: false };
 let hasZ3N0 = false;
 let expandedPCard = null;
 let equippedTag = '', equippedTagColor = '#6c8ef5';
+let sessionTicket = "";   // PlayFab REST session
 
 // Client prediction
 let lx = 0, ly = 0, langle = 0;
@@ -456,71 +456,80 @@ function afterDiscordLogin() {
 
   // Init PlayFab FIRST, then show menu
   initPlayFab(discordUser, () => show('s-menu'));
+        fetch(SERVER).catch(() => {});  // warm up Render server
 }
 
 // ══════════════════════════════
 //  PLAYFAB — properly wired
-// ══════════════════════════════
 function initPlayFab(user, callback) {
-  const statusEl = document.getElementById('menu-pf-status');
+    const statusEl = document.getElementById("menu-pf-status");
+    statusEl.innerHTML = '<div class="status-dot" style="background:var(--yellow)"></div> PlayFab connecting…';
 
-  if (typeof PlayFab === 'undefined') {
-    statusEl.innerHTML = '<span style="color:var(--red)">● PlayFab SDK not loaded</span>';
-    if (callback) callback();
-    return;
-  }
+    fetch(`https://${PLAYFAB_TITLE_ID}.playfabapi.com/Client/LoginWithCustomID`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ TitleId: PLAYFAB_TITLE_ID, CustomId: "discord_" + user.id, CreateAccount: true })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.code === 200 && data.data && data.data.SessionTicket) {
+            sessionTicket = data.data.SessionTicket;
+            playfabReady = true;
+            playfabId = data.data.PlayFabId;
+            document.getElementById("menu-pfid").textContent = "PlayFab ID: " + playfabId;
+            statusEl.innerHTML = '<div class="status-dot"></div> PlayFab connected';
 
-  PlayFab.settings.titleId = PLAYFAB_TITLE_ID;
+            return fetch(`https://${PLAYFAB_TITLE_ID}.playfabapi.com/Client/GetUserData`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket },
+                body: JSON.stringify({ Keys: ["tag", "tagColor", "banned"] })
+            }).then(r => r.json()).then(ud => ({ ticket: sessionTicket, userData: ud.data }));
+        } else {
+            throw new Error("PlayFab login failed: " + (data.errorMessage || "unknown"));
+        }
+    })
+    .then(({ ticket, userData }) => {
+        if (userData && userData.Data) {
+            const d = userData.Data;
+            if (d.banned && d.banned.Value === "true") {
+                localStorage.removeItem("discord_user");
+                document.getElementById("login-status").innerHTML = '🚫 <b>You are banned.</b>';
+                show("s-login");
+                return;
+            }
+            if (d.tag && d.tag.Value) {
+                equippedTag = d.tag.Value;
+                equippedTagColor = (d.tagColor && d.tagColor.Value) || "#6c8ef5";
+                if (equippedTag === "Z3N0") hasZ3N0 = true;
+            }
+        }
 
-  PlayFabClientAPI.LoginWithCustomID({
-    TitleId: PLAYFAB_TITLE_ID,
-    CustomId: 'discord_' + user.id,
-    CreateAccount: true,
-    InfoRequestParameters: {
-      GetUserInventory: true,
-      GetUserData: true,
-      GetPlayerStatistics: true
-    }
-  }, function(result, error) {
-    if (error) {
-      console.error('PlayFab login error:', error);
-      statusEl.innerHTML = '<span style="color:var(--red)">● PlayFab error: ' + (error.errorMessage || 'unknown') + '</span>';
-      if (callback) callback();
-      return;
-    }
+        fetch(`https://${PLAYFAB_TITLE_ID}.playfabapi.com/Client/UpdateUserTitleDisplayName`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Authorization": ticket },
+            body: JSON.stringify({ DisplayName: user.username.slice(0, 25) })
+        }).catch(() => {});
 
-    playfabReady = true;
-    playfabId = result.data.PlayFabId;
-    document.getElementById('menu-pfid').textContent = 'PlayFab ID: ' + playfabId;
-    statusEl.innerHTML = '<div class="status-dot"></div> PlayFab connected';
+        fetch(`https://${PLAYFAB_TITLE_ID}.playfabapi.com/Client/GetUserInventory`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Authorization": ticket },
+            body: "{}"
+        }).then(r => r.json()).then(inv => {
+            inventoryItems = inv.data.Inventory || [];
+            renderInventory();
+        }).catch(() => {});
 
-    // Display name sync
-    PlayFabClientAPI.UpdateUserTitleDisplayName({
-      DisplayName: user.username.slice(0, 25)
-    }, null, null);
-
-    // Load user data (tags, bans)
-    const userData = result.data.InfoResultPayload && result.data.InfoResultPayload.UserData;
-    if (userData) {
-      if (userData.banned && userData.banned.Value === 'true') {
-        localStorage.removeItem('discord_user');
-        document.getElementById('login-status').innerHTML = '🚫 <b>You are banned.</b>';
-        show('s-login');
-        return;
-      }
-      if (userData.tag && userData.tag.Value) {
-        equippedTag = userData.tag.Value;
-        equippedTagColor = (userData.tagColor && userData.tagColor.Value) || '#6c8ef5';
-        if (equippedTag === 'Z3N0') hasZ3N0 = true;
-      }
-    }
-
-    // Load inventory
-    loadInventory(result);
-
-    if (callback) callback();
-  });
+        if (callback) callback();
+    })
+    .catch(err => {
+        console.error("PlayFab REST error:", err);
+        statusEl.innerHTML = '<span style="color:var(--yellow)">● PlayFab unavailable – offline mode</span>';
+        hasZ3N0 = true;
+        playfabReady = false;
+        if (callback) callback();
+    });
 }
+// ══════════════════════════════
 
 // ══════════════════════════════
 //  INVENTORY

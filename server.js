@@ -385,3 +385,18 @@ app.get('/api/discord/login', async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+
+// Proxy: get Discord user by token
+app.get('/api/discord/me', async (req, res) => {
+    const token = req.query.token;
+    if (!token) return res.status(400).json({ error: 'No token' });
+    try {
+        const userRes = await fetch('https://discord.com/api/users/@me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const user = await userRes.json();
+        res.json(user);
+    } catch(e) {
+        res.status(500).json({ error: e.message });
+    }
+});

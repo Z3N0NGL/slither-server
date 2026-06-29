@@ -167,23 +167,27 @@
         function checkLogin() {
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-            const saved = localStorage.getItem('discord_user');
+            const token = params.get("access_token");
+            const saved = localStorage.getItem("discord_user");
             if (saved) {
                 const user = JSON.parse(saved);
                 playerName = user.username;
                 initPlayFab(user);
                 showGame(user);
             } else if (token) {
-                fetch('https://discord.com/api/users/@me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                }).then(r => r.json()).then(user => {
-                    localStorage.setItem('discord_user', JSON.stringify(user));
-                    playerName = user.username;
-                    window.location.hash = '';
-                    initPlayFab(user);
-                    showGame(user);
-                }).catch(() => { loginStatus.textContent = 'Login failed'; });
+                fetch(SERVER + "/api/discord/me?token=" + token)
+                .then(r => r.json())
+                .then(user => {
+                    if (user.username) {
+                        localStorage.setItem("discord_user", JSON.stringify(user));
+                        playerName = user.username;
+                        window.location.hash = "";
+                        initPlayFab(user);
+                        showGame(user);
+                    } else {
+                        loginStatus.textContent = "Login failed";
+                    }
+                }).catch(() => { loginStatus.textContent = "Login failed"; });
             }
         }
 

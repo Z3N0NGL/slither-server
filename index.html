@@ -4,82 +4,247 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Slither.io — Z3N0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
+  /* Game UI (dark) */
   --bg:#0c0e14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#20253a;
   --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
   --accent:#6c8ef5;--accent-d:#4a6be0;
   --green:#3ecf8e;--red:#f56565;--yellow:#f6ad55;--purple:#b794f4;
   --text:#e8eaf0;--text2:#8892a4;--text3:#4a5368;
-  --r:12px;--r-sm:8px;
+  --r:14px;--r-sm:8px;
   --sh:0 4px 24px rgba(0,0,0,0.5);
+
+  /* Menu / Login (light) */
+  --m-bg:#f0f2f7;
+  --m-surface:#ffffff;
+  --m-surface2:#f7f8fc;
+  --m-border:#e2e5ee;
+  --m-border2:#d0d4e4;
+  --m-text:#111827;
+  --m-text2:#6b7280;
+  --m-text3:#9ca3af;
+  --m-accent:#4f6ef7;
+  --m-accent-h:#3a57e8;
+  --m-green:#10b77f;
+  --m-red:#ef4444;
+  --m-shadow:0 1px 3px rgba(0,0,0,0.07),0 8px 32px rgba(79,110,247,0.08);
+  --m-shadow-lg:0 4px 6px rgba(0,0,0,0.05),0 20px 60px rgba(79,110,247,0.13);
 }
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;user-select:none}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;user-select:none}
 
 /* SCREENS */
 .screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .hidden{display:none!important}
 
-/* ── DISCORD LOGIN ── */
+/* ════════════════════════════════
+   DISCORD LOGIN — light theme
+   ════════════════════════════════ */
 #s-login{
-  background:radial-gradient(ellipse 60% 50% at 30% 30%,rgba(108,142,245,0.1) 0%,transparent 70%),var(--bg);
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 25%, rgba(79,110,247,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 35% at 85% 75%, rgba(16,183,127,0.09) 0%, transparent 60%),
+    var(--m-bg);
 }
-.login-box{display:flex;flex-direction:column;align-items:center;gap:24px}
-.logo-text{font-size:3rem;font-weight:900;letter-spacing:-1px;
-  background:linear-gradient(135deg,#6c8ef5,#3ecf8e);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo-tag{font-size:.65rem;letter-spacing:.35em;color:var(--text3);text-transform:uppercase;margin-top:-18px}
-.card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:28px;width:320px;display:flex;flex-direction:column;gap:12px}
-.card h2{font-size:.9rem;color:var(--text2);text-align:center;font-weight:500}
-.dbtn{width:100%;padding:12px;border:none;border-radius:var(--r-sm);font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .15s,transform .1s}
-.dbtn:hover{opacity:.88;transform:translateY(-1px)}
-.dbtn:active{transform:translateY(0);opacity:.75}
-.dbtn-discord{background:#5865f2;color:#fff}
-.dbtn-danger{background:var(--red);color:#fff}
-#login-status{font-size:.8rem;color:var(--text2);text-align:center;min-height:16px}
 
-/* ── MAIN MENU ── */
+/* Subtle animated grid */
+#s-login::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(79,110,247,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,110,247,0.04) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black,transparent);
+}
+
+.login-box{
+  display:flex;flex-direction:column;align-items:center;gap:32px;
+  position:relative;z-index:1;
+}
+
+/* Logo */
+.logo-lockup{display:flex;flex-direction:column;align-items:center;gap:6px}
+.logo-text{
+  font-family:'Syne',sans-serif;
+  font-size:3.4rem;font-weight:700;letter-spacing:-2px;
+  background:linear-gradient(135deg,#4f6ef7 0%,#10b77f 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.logo-snake{font-size:2.6rem;margin-bottom:4px;filter:drop-shadow(0 2px 8px rgba(79,110,247,0.3))}
+.logo-tag{
+  font-family:'DM Sans',sans-serif;
+  font-size:.62rem;letter-spacing:.32em;
+  color:var(--m-text3);text-transform:uppercase;font-weight:600;
+}
+
+/* Login card */
+.card{
+  background:var(--m-surface);
+  border:1px solid var(--m-border);
+  border-radius:20px;
+  padding:32px 28px;
+  width:340px;
+  display:flex;flex-direction:column;gap:14px;
+  box-shadow:var(--m-shadow-lg);
+}
+.card-title{
+  font-size:.82rem;font-weight:600;
+  color:var(--m-text2);text-align:center;
+  letter-spacing:.01em;
+}
+.dbtn{
+  width:100%;padding:13px 16px;border:none;
+  border-radius:10px;font-size:.92rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  gap:10px;transition:transform .12s,box-shadow .12s,opacity .12s;
+  font-family:'DM Sans',sans-serif;letter-spacing:-.01em;
+}
+.dbtn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.15);opacity:.93}
+.dbtn:active{transform:translateY(0);box-shadow:none;opacity:.8}
+.dbtn-discord{background:#5865f2;color:#fff;box-shadow:0 2px 8px rgba(88,101,242,0.35)}
+.dbtn-danger{
+  background:transparent;color:var(--m-red);
+  border:1px solid rgba(239,68,68,0.25);
+  box-shadow:none;
+}
+.dbtn-danger:hover{background:rgba(239,68,68,0.06)}
+#login-status{
+  font-size:.78rem;color:var(--m-text2);text-align:center;min-height:18px;
+  line-height:1.5;
+}
+.card-sep{height:1px;background:var(--m-border);margin:2px 0}
+
+/* ════════════════════════════════
+   MAIN MENU — light theme
+   ════════════════════════════════ */
 #s-menu{
-  background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(108,142,245,0.07) 0%,transparent 70%),var(--bg);
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(79,110,247,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(16,183,127,0.07) 0%, transparent 55%),
+    var(--m-bg);
 }
-.menu-wrap{display:flex;gap:32px;align-items:flex-start;max-width:860px;width:100%;padding:0 24px}
-.menu-left{display:flex;flex-direction:column;gap:16px;min-width:260px}
-.menu-logo{font-size:2.2rem;font-weight:900;letter-spacing:-1px;
-  background:linear-gradient(135deg,#6c8ef5,#3ecf8e);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.menu-profile{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px}
-.profile-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--green));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#fff;flex-shrink:0}
+#s-menu::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(79,110,247,0.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,110,247,0.035) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent);
+}
+
+.menu-wrap{
+  display:flex;gap:24px;align-items:flex-start;
+  max-width:880px;width:100%;padding:0 24px;
+  position:relative;z-index:1;
+}
+.menu-left{display:flex;flex-direction:column;gap:12px;min-width:268px}
+
+/* Menu logo */
+.menu-logo{
+  font-family:'Syne',sans-serif;
+  font-size:2rem;font-weight:700;letter-spacing:-1.5px;
+  background:linear-gradient(135deg,#4f6ef7,#10b77f);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  padding:4px 0 2px;
+}
+
+/* Profile card */
+.menu-profile{
+  background:var(--m-surface);
+  border:1px solid var(--m-border);
+  border-radius:16px;
+  padding:18px;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:var(--m-shadow);
+}
+.profile-avatar{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,#4f6ef7,#10b77f);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:#fff;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(79,110,247,0.3);
+}
 .profile-row{display:flex;align-items:center;gap:12px}
-.profile-info{display:flex;flex-direction:column;gap:2px}
-.profile-name{font-weight:700;font-size:1rem}
-.profile-pf{font-size:.72rem;color:var(--text3);font-family:monospace}
-.profile-status{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--green)}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.profile-info{display:flex;flex-direction:column;gap:3px}
+.profile-name{font-weight:700;font-size:.95rem;color:var(--m-text);letter-spacing:-.01em}
+.profile-pf{font-size:.68rem;color:var(--m-text3);font-family:'DM Sans',monospace;letter-spacing:.02em}
+.profile-status{
+  display:flex;align-items:center;gap:7px;
+  font-size:.74rem;color:var(--m-text2);font-weight:500;
+  padding-top:4px;border-top:1px solid var(--m-border);
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--m-green);flex-shrink:0;
+  animation:mpulse 2.2s ease-in-out infinite;
+}
+@keyframes mpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
 
-.mbtn{width:100%;padding:13px 16px;border:none;border-radius:var(--r-sm);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:10px}
-.mbtn:hover{filter:brightness(1.12);transform:translateX(2px)}
-.mbtn-primary{background:var(--accent);color:#fff}
-.mbtn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
-.mbtn-red{background:rgba(245,101,101,0.15);color:var(--red);border:1px solid rgba(245,101,101,0.25)}
+/* Menu buttons */
+.mbtn{
+  width:100%;padding:12px 16px;border:none;border-radius:10px;
+  font-size:.9rem;font-weight:600;cursor:pointer;
+  transition:transform .1s,box-shadow .1s,background .12s;
+  text-align:left;display:flex;align-items:center;gap:10px;
+  font-family:'DM Sans',sans-serif;letter-spacing:-.01em;
+}
+.mbtn:hover{transform:translateY(-1px)}
+.mbtn:active{transform:translateY(0)}
+.mbtn-primary{
+  background:var(--m-accent);color:#fff;
+  box-shadow:0 2px 10px rgba(79,110,247,0.35);
+}
+.mbtn-primary:hover{background:var(--m-accent-h);box-shadow:0 4px 18px rgba(79,110,247,0.4)}
+.mbtn-secondary{
+  background:var(--m-surface);color:var(--m-text);
+  border:1px solid var(--m-border);
+  box-shadow:var(--m-shadow);
+}
+.mbtn-secondary:hover{background:var(--m-surface2);border-color:var(--m-border2)}
+.mbtn-red{
+  background:transparent;color:var(--m-red);
+  border:1px solid rgba(239,68,68,0.2);
+}
+.mbtn-red:hover{background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.35)}
+.mbtn-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
 
-.menu-right{flex:1;display:flex;flex-direction:column;gap:16px}
-.inventory-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:20px}
+/* Inventory panel */
+.menu-right{flex:1;display:flex;flex-direction:column;gap:12px}
+.inventory-panel{
+  background:var(--m-surface);
+  border:1px solid var(--m-border);
+  border-radius:16px;padding:20px;
+  box-shadow:var(--m-shadow);
+}
 .inv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.inv-title{font-size:.95rem;font-weight:700}
-.inv-sub{font-size:.75rem;color:var(--text3)}
-.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
-.inv-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:border-color .15s}
-.inv-item:hover{border-color:var(--border2)}
-.inv-item.equipped{border-color:var(--accent);background:rgba(108,142,245,0.08)}
-.inv-icon{font-size:1.8rem;line-height:1}
-.inv-name{font-size:.72rem;font-weight:600;text-align:center;color:var(--text2)}
-.inv-equip{padding:4px 10px;border:none;border-radius:5px;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .15s}
-.inv-equip.on{background:var(--accent);color:#fff}
-.inv-equip.off{background:var(--bg4);color:var(--text2);border:1px solid var(--border2)}
-.inv-equip:hover{filter:brightness(1.15)}
-.inv-empty{color:var(--text3);font-size:.85rem;text-align:center;padding:24px 0}
+.inv-title{font-size:.88rem;font-weight:700;color:var(--m-text)}
+.inv-sub{font-size:.72rem;color:var(--m-text3);margin-top:2px}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px}
+.inv-item{
+  background:var(--m-surface2);border:1px solid var(--m-border);
+  border-radius:12px;padding:14px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:border-color .15s,box-shadow .15s;
+}
+.inv-item:hover{border-color:var(--m-border2);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.inv-item.equipped{border-color:var(--m-accent);background:rgba(79,110,247,0.05)}
+.inv-icon{font-size:1.7rem;line-height:1}
+.inv-name{font-size:.7rem;font-weight:600;text-align:center;color:var(--m-text2)}
+.inv-equip{
+  padding:4px 10px;border:none;border-radius:6px;
+  font-size:.68rem;font-weight:700;cursor:pointer;transition:all .12s;
+}
+.inv-equip.on{background:var(--m-accent);color:#fff}
+.inv-equip.off{
+  background:transparent;color:var(--m-text3);
+  border:1px solid var(--m-border2);
+}
+.inv-equip:hover{filter:brightness(1.12)}
+.inv-empty{color:var(--m-text3);font-size:.82rem;text-align:center;padding:24px 0}
 
 /* ── GAME SCREEN ── */
 #s-game{background:var(--bg)}
@@ -195,16 +360,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <!-- ══ DISCORD LOGIN ══ -->
 <div id="s-login" class="screen">
   <div class="login-box">
-    <div>
-      <div class="logo-text">🐍 SLITHER.IO</div>
+    <div class="logo-lockup">
+      <div class="logo-snake">🐍</div>
+      <div class="logo-text">SLITHER.IO</div>
       <div class="logo-tag">Z3N0 Edition</div>
     </div>
     <div class="card">
-      <h2>Sign in to continue</h2>
+      <div class="card-title">Sign in to continue</div>
       <button id="btn-login" class="dbtn dbtn-discord">
         <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
         Continue with Discord
       </button>
+      <div class="card-sep"></div>
       <button id="btn-unlink" class="dbtn dbtn-danger" style="display:none">Unlink Account</button>
       <div id="login-status"></div>
     </div>
@@ -225,13 +392,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           </div>
         </div>
         <div class="profile-status" id="menu-pf-status">
-          <div class="status-dot" style="background:var(--yellow)"></div>
+          <div class="status-dot" style="background:var(--m-yellow,#f6ad55)"></div>
           Connecting to PlayFab...
         </div>
       </div>
-      <button class="mbtn mbtn-primary" id="btn-play">▶ &nbsp;Play</button>
-      <button class="mbtn mbtn-secondary" id="btn-inventory-toggle">🎒 &nbsp;Owned Items</button>
-      <button class="mbtn mbtn-red" id="btn-logout">↩ &nbsp;Log Out</button>
+      <button class="mbtn mbtn-primary" id="btn-play">
+        <span class="mbtn-icon">▶</span> Play
+      </button>
+      <button class="mbtn mbtn-secondary" id="btn-inventory-toggle">
+        <span class="mbtn-icon">🎒</span> Owned Items
+      </button>
+      <button class="mbtn mbtn-red" id="btn-logout">
+        <span class="mbtn-icon">↩</span> Log Out
+      </button>
     </div>
 
     <div class="menu-right" id="menu-inventory-section" style="display:none">
@@ -373,6 +546,8 @@ let sessionTicket = "";   // PlayFab REST session
 let lx = 0, ly = 0, langle = 0;
 let predicting = false;
 let snakeSpeed = 3;
+let loopRunning = false;
+let localTrail = []; // client-side body trail for smooth own-snake rendering
 
 // DOM
 const canvas  = document.getElementById('game-canvas');
@@ -603,7 +778,7 @@ function equipItem(itemId, displayName) {
 document.getElementById('btn-play').onclick = () => {
   show('s-game');
   connectServer();
-  requestAnimationFrame(gameLoop);
+  if (!loopRunning) { loopRunning = true; requestAnimationFrame(gameLoop); }
 };
 
 document.getElementById('btn-menu-back').onclick = () => {
@@ -650,9 +825,9 @@ function connectServer() {
     orbs = state.orbs;
     const me = state.players.find(p => p.id === playerId);
     if (me) {
-      // Reconcile: nudge local prediction toward authoritative
-      lx += (me.x - lx) * 0.08;
-      ly += (me.y - ly) * 0.08;
+      // Reconcile: nudge local prediction toward authoritative (gentle to avoid jitter)
+      lx += (me.x - lx) * 0.05;
+      ly += (me.y - ly) * 0.05;
       snakeSpeed = me.speed || 3;
       document.getElementById('hud-score').textContent = Math.floor(me.score || 0);
       document.getElementById('hud-name').textContent = me.name;
@@ -663,11 +838,11 @@ function connectServer() {
   });
 
   socket.on('playerDied', () => {
-    predicting = false;
+    predicting = false; localTrail = [];
     deathEl.classList.add('show');
     setTimeout(() => deathEl.classList.remove('show'), 2500);
   });
-  socket.on('playerRespawned', () => { predicting = true; toast('Respawned'); });
+  socket.on('playerRespawned', () => { predicting = true; localTrail = []; toast('Respawned'); });
   socket.on('kicked', () => { toast('You were kicked'); setTimeout(() => location.reload(), 2000); });
   socket.on('disconnect', () => { predicting = false; toast('Disconnected'); });
   socket.on('connect_error', () => toast('Server unreachable'));
@@ -710,6 +885,10 @@ function getWasdAngle() {
 }
 
 function gameLoop(ts) {
+  // Delta time — cap at 50ms to avoid spiral on tab refocus
+  const dt = Math.min(ts - (gameLoop._last || ts), 50);
+  gameLoop._last = ts;
+
   // FPS
   fpsCount++;
   if (ts - fpsLast >= 1000) {
@@ -719,7 +898,7 @@ function gameLoop(ts) {
     el.style.color = currentFps >= 55 ? '#3ecf8e' : currentFps >= 30 ? '#f6ad55' : '#f56565';
   }
 
-  // ── Client prediction runs every frame ──
+  // ── Client prediction — fully time-based ──
   if (predicting && playerId) {
     let targetAngle = langle;
 
@@ -730,22 +909,30 @@ function gameLoop(ts) {
       if (wa !== null) targetAngle = wa;
     }
 
-    // Smooth turn (mirrors server logic exactly)
+    // Time-based angular velocity — 4.5 rad/s turn rate (matches real slither.io feel)
+    const MAX_TURN = 4.5; // radians per second
     let diff = targetAngle - langle;
     while (diff >  Math.PI) diff -= Math.PI * 2;
     while (diff < -Math.PI) diff += Math.PI * 2;
-    langle += diff * 0.15;
+    const maxStep = MAX_TURN * (dt / 1000);
+    langle += Math.max(-maxStep, Math.min(maxStep, diff));
 
     const spd = (boosting ? snakeSpeed * 1.8 : snakeSpeed) * admin.speed;
-    lx = Math.max(BORDER, Math.min(WORLD_W - BORDER, lx + Math.cos(langle) * spd));
-    ly = Math.max(BORDER, Math.min(WORLD_H - BORDER, ly + Math.sin(langle) * spd));
+    // Move at pixels/ms to be frame-rate independent
+    const dist = spd * (dt / 16.67); // normalise to 60fps baseline
+    lx = Math.max(BORDER, Math.min(WORLD_W - BORDER, lx + Math.cos(langle) * dist));
+    ly = Math.max(BORDER, Math.min(WORLD_H - BORDER, ly + Math.sin(langle) * dist));
+
+    // Track local body trail for smooth own-snake rendering
+    localTrail.unshift({ x: lx, y: ly, a: langle });
+    if (localTrail.length > 300) localTrail.pop();
   }
 
-  // Smooth camera lerp
+  // Smooth camera lerp — faster response
   camTX = lx - canvas.width/2;
   camTY = ly - canvas.height/2;
-  camX += (camTX - camX) * 0.1;
-  camY += (camTY - camY) * 0.1;
+  camX += (camTX - camX) * 0.14;
+  camY += (camTY - camY) * 0.14;
 
   // Network send — 30hz
   if (ts - lastSend >= 33 && socket?.connected && playerId) {
@@ -766,6 +953,228 @@ function gameLoop(ts) {
 // ══════════════════════════════
 //  RENDER
 // ══════════════════════════════
+
+// Pre-generate scale texture offscreen canvas
+const scaleCanvas = document.createElement('canvas');
+scaleCanvas.width = 32; scaleCanvas.height = 32;
+(function buildScaleTexture() {
+  const sc = scaleCanvas.getContext('2d');
+  // Hexagonal scale pattern
+  sc.fillStyle = 'rgba(255,255,255,0.0)';
+  sc.fillRect(0,0,32,32);
+  sc.strokeStyle = 'rgba(0,0,0,0.18)';
+  sc.lineWidth = 1.2;
+  // draw arc scale
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      const ox = col * 14 + (row % 2) * 7;
+      const oy = row * 12;
+      sc.beginPath();
+      sc.arc(ox, oy, 9, 0, Math.PI);
+      sc.stroke();
+    }
+  }
+  // Highlight sheen
+  sc.fillStyle = 'rgba(255,255,255,0.07)';
+  sc.fillRect(0,0,32,16);
+})();
+const scalePattern = (() => {
+  const tmpCtx = document.createElement('canvas').getContext('2d');
+  return tmpCtx.createPattern(scaleCanvas, 'repeat');
+})();
+
+function drawSnakeBody(segs, color, isMe, headX, headY, headAngle, quality) {
+  if (!segs || segs.length < 2) return;
+
+  const n = segs.length;
+  const baseR = segs[0].radius || 20;
+
+  // Build point list — for own snake use localTrail for head region
+  const pts = [];
+  if (isMe && localTrail.length > 1) {
+    // blend local trail into server segs
+    const trailLen = Math.min(localTrail.length, 40);
+    for (let i = 0; i < trailLen; i++) pts.push({ x: localTrail[i].x, y: localTrail[i].y });
+    for (let i = 1; i < n; i++) pts.push({ x: segs[i].x, y: segs[i].y });
+  } else {
+    for (let i = 0; i < n; i++) pts.push({ x: segs[i].x, y: segs[i].y });
+  }
+
+  const total = pts.length;
+
+  // Parse base color for shade variants
+  let r = 100, g = 180, b = 100;
+  const cm = color.match(/^#([0-9a-f]{6})$/i);
+  if (cm) { r = parseInt(cm[1].slice(0,2),16); g = parseInt(cm[1].slice(2,4),16); b = parseInt(cm[1].slice(4,6),16); }
+
+  const colorLight = `rgb(${Math.min(255,r+55)},${Math.min(255,g+55)},${Math.min(255,b+55)})`;
+  const colorDark  = `rgb(${Math.max(0,r-40)},${Math.max(0,g-40)},${Math.max(0,b-40)})`;
+  const colorSheen = `rgba(255,255,255,0.22)`;
+
+  // Draw tube body using line segments with rounded caps
+  // Pass 1: dark shadow outline
+  ctx.save();
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  for (let pass = 0; pass < (quality === 'high' ? 3 : 2); pass++) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < total; i++) {
+      // Smooth with midpoint averaging (catmull-rom style)
+      if (i < total - 1) {
+        const mx = (pts[i].x + pts[i+1].x) / 2;
+        const my = (pts[i].y + pts[i+1].y) / 2;
+        ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+      } else {
+        ctx.lineTo(pts[i].x, pts[i].y);
+      }
+    }
+
+    const taper = (i) => {
+      const t = i / total;
+      return Math.max(4, baseR * (1 - t * 0.45));
+    };
+
+    if (pass === 0) {
+      // Shadow
+      ctx.strokeStyle = `rgba(0,0,0,0.35)`;
+      ctx.lineWidth = baseR * 2 + 6;
+    } else if (pass === 1) {
+      // Base color gradient along body
+      const grad = ctx.createLinearGradient(pts[0].x, pts[0].y, pts[total-1].x, pts[total-1].y);
+      grad.addColorStop(0, colorLight);
+      grad.addColorStop(0.5, color);
+      grad.addColorStop(1, colorDark);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = baseR * 2;
+    } else {
+      // Scale texture overlay
+      if (scalePattern) {
+        ctx.strokeStyle = scalePattern;
+        ctx.globalAlpha = 0.25;
+        ctx.lineWidth = baseR * 2;
+      }
+    }
+    ctx.stroke();
+  }
+
+  // Sheen highlight strip (top of body)
+  if (quality === 'high') {
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < total; i++) {
+      if (i < total - 1) {
+        const mx = (pts[i].x + pts[i+1].x) / 2;
+        const my = (pts[i].y + pts[i+1].y) / 2;
+        ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+      } else ctx.lineTo(pts[i].x, pts[i].y);
+    }
+    const sheenGrad = ctx.createLinearGradient(pts[0].x, pts[0].y - baseR, pts[0].x, pts[0].y + baseR);
+    sheenGrad.addColorStop(0, 'rgba(255,255,255,0.28)');
+    sheenGrad.addColorStop(0.4, 'rgba(255,255,255,0.06)');
+    sheenGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.strokeStyle = sheenGrad;
+    ctx.lineWidth = baseR * 1.1;
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+function drawSnakeHead(hx, hy, angle, radius, color, isMe, quality) {
+  ctx.save();
+  ctx.translate(hx, hy);
+  ctx.rotate(angle);
+
+  const r = radius;
+
+  let cr = 100, cg = 180, cb = 100;
+  const cm = color.match(/^#([0-9a-f]{6})$/i);
+  if (cm) { cr = parseInt(cm[1].slice(0,2),16); cg = parseInt(cm[1].slice(2,4),16); cb = parseInt(cm[1].slice(4,6),16); }
+  const colorLight = `rgb(${Math.min(255,cr+55)},${Math.min(255,cg+55)},${Math.min(255,cb+55)})`;
+
+  // Head shadow
+  if (quality === 'high') {
+    ctx.shadowColor = `rgba(0,0,0,0.5)`;
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 4;
+  }
+
+  // Head body — slightly elongated oval
+  const hg = ctx.createRadialGradient(-r*.2, -r*.3, 0, 0, 0, r * 1.3);
+  hg.addColorStop(0, colorLight);
+  hg.addColorStop(0.6, color);
+  hg.addColorStop(1, `rgb(${Math.max(0,cr-50)},${Math.max(0,cg-50)},${Math.max(0,cb-50)})`);
+  ctx.fillStyle = hg;
+  ctx.beginPath();
+  ctx.ellipse(r * 0.1, 0, r * 1.15, r, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+
+  // Scale texture on head
+  if (quality === 'high' && scalePattern) {
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = scalePattern;
+    ctx.beginPath();
+    ctx.ellipse(r * 0.1, 0, r * 1.15, r, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  // Head sheen
+  if (quality === 'high') {
+    const sg = ctx.createRadialGradient(-r*.3, -r*.5, 0, -r*.2, -r*.3, r*.9);
+    sg.addColorStop(0, 'rgba(255,255,255,0.35)');
+    sg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = sg;
+    ctx.beginPath();
+    ctx.ellipse(r * 0.1, 0, r * 1.15, r, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Outline
+  ctx.strokeStyle = `rgba(0,0,0,0.25)`;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.ellipse(r * 0.1, 0, r * 1.15, r, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Nostril dots
+  ctx.fillStyle = `rgba(0,0,0,0.4)`;
+  ctx.beginPath(); ctx.arc(r * 1.0, -r * 0.28, r * 0.1, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(r * 1.0,  r * 0.28, r * 0.1, 0, Math.PI * 2); ctx.fill();
+
+  // Eyes
+  const ey = r * 0.38;
+  // Eye whites
+  ctx.fillStyle = '#fff';
+  ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 3;
+  ctx.beginPath(); ctx.arc(r * 0.35, -ey, r * 0.32, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(r * 0.35,  ey, r * 0.32, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Irises
+  const irisColor = isMe ? '#4f8ef5' : '#2a6020';
+  ctx.fillStyle = irisColor;
+  ctx.beginPath(); ctx.arc(r * 0.42, -ey, r * 0.2, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(r * 0.42,  ey, r * 0.2, 0, Math.PI * 2); ctx.fill();
+
+  // Pupils
+  ctx.fillStyle = '#0a0a0a';
+  ctx.beginPath(); ctx.arc(r * 0.48, -ey, r * 0.12, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(r * 0.48,  ey, r * 0.12, 0, Math.PI * 2); ctx.fill();
+
+  // Eye shine
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.beginPath(); ctx.arc(r * 0.36, -ey - r*0.08, r * 0.07, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(r * 0.36,  ey - r*0.08, r * 0.07, 0, Math.PI * 2); ctx.fill();
+
+  ctx.restore();
+}
+
 function render(ts) {
   const q = document.getElementById('set-quality')?.value || 'high';
   const cx = Math.round(camX), cy = Math.round(camY);
@@ -813,64 +1222,54 @@ function render(ts) {
     if (!p.isAlive || !p.segments?.length) continue;
     const isMe = p.id === playerId;
     const head0 = p.segments[0];
-    if (head0.x < cx-200 || head0.x > cx+canvas.width+200 || head0.y < cy-200 || head0.y > cy+canvas.height+200) continue;
+    if (head0.x < cx-250 || head0.x > cx+canvas.width+250 || head0.y < cy-250 || head0.y > cy+canvas.height+250) continue;
 
-    // Use predicted head for own snake
-    const drawHead = isMe ? { x: lx, y: ly } : head0;
+    const drawHeadX = isMe ? lx : head0.x;
+    const drawHeadY = isMe ? ly : head0.y;
     const drawAngle = isMe ? langle : (p.angle || 0);
+    const hr = head0.radius || 20;
 
     // ESP
     if (admin.esp && !isMe) {
-      const er = (head0.radius||20)+28;
+      const er = hr + 30;
       ctx.strokeStyle='#f0e040'; ctx.lineWidth=1.2;
       ctx.strokeRect(head0.x-er,head0.y-er,er*2,er*2);
-      ctx.fillStyle='#f0e040'; ctx.font='bold 10px Segoe UI'; ctx.textAlign='center';
+      ctx.fillStyle='#f0e040'; ctx.font='bold 10px DM Sans'; ctx.textAlign='center';
       ctx.fillText(p.name+' ['+Math.floor(p.score)+']',head0.x,head0.y-er-3);
     }
 
-    // Segments back→front
-    for (let i = p.segments.length-1; i >= 0; i--) {
-      const seg = p.segments[i];
-      const sx2 = isMe && i===0 ? lx : seg.x;
-      const sy2 = isMe && i===0 ? ly : seg.y;
-      const r = seg.radius || Math.max(5, 20 - i*0.7);
-      ctx.globalAlpha = 1 - (i/p.segments.length)*0.35;
-      ctx.fillStyle = p.color;
-      if (isMe && i===0 && q==='high') { ctx.shadowColor=p.color; ctx.shadowBlur=14; }
-      ctx.beginPath(); ctx.arc(sx2,sy2,r,0,Math.PI*2); ctx.fill();
-      ctx.shadowBlur=0;
+    // Draw tube body (back to front — body first, then head on top)
+    drawSnakeBody(p.segments, p.color, isMe, drawHeadX, drawHeadY, drawAngle, q);
+
+    // Own glow ring
+    if (isMe && q === 'high') {
+      ctx.save();
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 20;
+      ctx.strokeStyle = `${p.color}88`;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(drawHeadX, drawHeadY, hr + 10, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
     }
-    ctx.globalAlpha=1;
 
-    const hr = head0.radius||20;
-    const hx2 = drawHead.x, hy2 = drawHead.y;
-    const ea = drawAngle, eo = hr*.46;
+    // Draw head on top
+    drawSnakeHead(drawHeadX, drawHeadY, drawAngle, hr, p.color, isMe, q);
 
-    // Eyes whites
-    ctx.fillStyle='#fff';
-    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea-.5)*eo,hy2+Math.sin(ea-.5)*eo,hr*.3,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea+.5)*eo,hy2+Math.sin(ea+.5)*eo,hr*.3,0,Math.PI*2); ctx.fill();
-    // Pupils
-    ctx.fillStyle='#111';
-    const pd=hr*.12;
-    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea-.5)*eo+Math.cos(ea)*pd,hy2+Math.sin(ea-.5)*eo+Math.sin(ea)*pd,hr*.16,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(hx2+Math.cos(ea+.5)*eo+Math.cos(ea)*pd,hy2+Math.sin(ea+.5)*eo+Math.sin(ea)*pd,hr*.16,0,Math.PI*2); ctx.fill();
-
-    // Name + tag
-    ctx.textAlign='center'; ctx.shadowColor='rgba(0,0,0,0.8)'; ctx.shadowBlur=4;
+    // Name + tag labels
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 13px DM Sans';
     if (p.tag) {
-      ctx.fillStyle=p.tagColor||'#6c8ef5'; ctx.font='bold 10px Segoe UI';
-      ctx.fillText('['+p.tag+']',hx2,hy2-hr-22);
+      ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 5;
+      ctx.fillStyle = p.tagColor || '#6c8ef5';
+      ctx.font = 'bold 10px DM Sans';
+      ctx.fillText('['+p.tag+']', drawHeadX, drawHeadY - hr - 24);
     }
-    ctx.fillStyle='#fff'; ctx.font='bold 13px Segoe UI';
-    ctx.fillText(p.name,hx2,hy2-hr-10);
-    ctx.shadowBlur=0;
-
-    // Own ring
-    if (isMe) {
-      ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2.5;
-      ctx.beginPath(); ctx.arc(hx2,hy2,hr+6,0,Math.PI*2); ctx.stroke();
-    }
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 13px DM Sans';
+    ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 6;
+    ctx.fillText(p.name, drawHeadX, drawHeadY - hr - 11);
+    ctx.shadowBlur = 0;
+    ctx.restore();
   }
 
   // 3D overlay

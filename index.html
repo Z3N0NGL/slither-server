@@ -724,6 +724,7 @@
         // ==================== DISCORD OAUTH ====================
         function checkDiscordLogin() {
             const urlParams = new URLSearchParams(window.location.search);
+            alert("Code found: " + urlParams.get('code'));
             const code = urlParams.get('code');
             const savedUser = localStorage.getItem('discord_user');
             const pendingCode = localStorage.getItem('pending_discord_code');

@@ -723,21 +723,28 @@
 
         // ==================== DISCORD OAUTH ====================
         function checkDiscordLogin() {
-            const urlParams = new URLSearchParams(window.location.search);
-            alert("Code found: " + urlParams.get('code'));
-            const code = urlParams.get('code');
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const accessToken = params.get('access_token');
             const savedUser = localStorage.getItem('discord_user');
-            const pendingCode = localStorage.getItem('pending_discord_code');
             
             if (savedUser) {
                 const user = JSON.parse(savedUser);
                 playerName = user.username;
                 showLoggedInState(user);
-            } else if (code) {
-                localStorage.setItem('pending_discord_code', code);
-                window.close();
-            } else if (pendingCode) {
-                localStorage.removeItem('pending_discord_code');
+            } else if (accessToken) {
+                fetch('https://discord.com/api/users/@me', {
+                    headers: { 'Authorization': 'Bearer ' + accessToken }
+                })
+                .then(res => res.json())
+                .then(user => {
+                    localStorage.setItem('discord_user', JSON.stringify(user));
+                    playerName = user.username;
+                    window.location.hash = '';
+                    showLoggedInState(user);
+                });
+            }
+        }
                 exchangeCodeForToken(pendingCode);
             }
             
@@ -784,8 +791,8 @@
             });
         }
         document.getElementById('discord-login-btn').addEventListener('click', () => {
-            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=identify`;
-            window.open(authUrl, "_blank");
+            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${DISCORD_REDIRECT_URI}&response_type=token&scope=identify`;
+            window.location.href = authUrl;
         });
         
         unlinkBtn.addEventListener('click', () => {

@@ -726,6 +726,25 @@
 
         // ==================== DISCORD OAUTH ====================
         function checkDiscordLogin() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const accessToken = params.get("access_token");
+            const savedUser = localStorage.getItem("discord_user");
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                playerName = user.username;
+                showLoggedInState(user);
+            } else if (accessToken) {
+                fetch("https://discord.com/api/users/@me", {
+                    headers: { Authorization: "Bearer " + accessToken }
+                }).then(r => r.json()).then(user => {
+                    localStorage.setItem("discord_user", JSON.stringify(user));
+                    playerName = user.username;
+                    window.location.hash = "";
+                    showLoggedInState(user);
+                }).catch(() => {
+                    loginStatus.textContent = "Login failed";
+                });
             }
         }
             const hash = window.location.hash.substring(1);

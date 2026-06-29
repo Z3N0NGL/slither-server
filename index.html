@@ -126,7 +126,7 @@
         </div>
     </div>
 
-    <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/playfab-web-sdk@2.131.240924/PlayFabClientApi.js"></script>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script>
         // ==================== CONFIG ====================
@@ -210,9 +210,9 @@
         }
 
         // ==================== PLAYFAB ====================
-        function initPlayFab(user) {
+        async function initPlayFab(user) {
             try {
-                if (typeof PlayFab === "undefined" || !PlayFabClientAPI) return;
+                await waitForPlayFab();
                 PlayFab.settings.titleId = PLAYFAB_TITLE;
                 PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {
                     playfabReady = true;
@@ -222,7 +222,26 @@
                         }
                     });
                 });
-            } catch(e) { console.log("PlayFab init failed, continuing without it"); }
+            } catch (e) {
+                console.log("PlayFab unavailable – admin panel open for now");
+                hasZ3N0 = true;
+            }
+        }
+
+        function waitForPlayFab() {
+            return new Promise((resolve, reject) => {
+                if (typeof PlayFabClientAPI !== "undefined") return resolve();
+                let attempts = 0;
+                const interval = setInterval(() => {
+                    if (typeof PlayFabClientAPI !== "undefined") {
+                        clearInterval(interval);
+                        resolve();
+                    } else if (++attempts >= 20) {
+                        clearInterval(interval);
+                        reject(new Error("PlayFab SDK not loaded"));
+                    }
+                }, 500);
+            });
         }
 
         // ==================== SERVER ====================

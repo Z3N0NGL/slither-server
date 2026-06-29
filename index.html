@@ -657,6 +657,8 @@
         <div id="notification"></div>
     </div>
 
+    <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
+    <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script>
         // ==================== CONFIGURATION ====================
@@ -676,6 +678,9 @@
         let playerId = null;
         let playerName = 'Player';
         let gamePlayers = [];
+        let hasZ3N0Tag = false;
+        let playfabReady = false;
+        let hasZ3N0Tag = false;
         let gameOrbs = [];
         let worldWidth = CONFIG.WORLD_WIDTH;
         let worldHeight = CONFIG.WORLD_HEIGHT;
@@ -734,6 +739,7 @@
                 const user = JSON.parse(savedUser);
                 playerName = user.username;
                 showLoggedInState(user);
+                initPlayFab(user);
             } else if (accessToken) {
                 fetch("https://discord.com/api/users/@me", {
                     headers: { Authorization: "Bearer " + accessToken }
@@ -742,11 +748,16 @@
                     playerName = user.username;
                     window.location.hash = "";
                     showLoggedInState(user);
+                initPlayFab(user);
                 }).catch(() => {
                     loginStatus.textContent = "Login failed";
                 });
             }
         }
+
+        function initPlayFab(user) {            if (typeof PlayFab === "undefined") return;            PlayFab.settings.titleId = CONFIG.PLAYFAB_TITLE_ID;            PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {                console.log("PlayFab logged in");                playfabReady = true;                PlayFabClientAPI.GetUserData({ Keys: ["tag"] }, (data, err) => {                    if (data && data.Data && data.Data.tag && data.Data.tag.Value === "Z3N0") {                        hasZ3N0Tag = true;                    }                });            });        }
+
+        function initPlayFab(user) {            if (typeof PlayFab === "undefined") return;            PlayFab.settings.titleId = CONFIG.PLAYFAB_TITLE_ID;            PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {                console.log("PlayFab logged in");                playfabReady = true;                PlayFabClientAPI.GetUserData({ Keys: ["tag"] }, (data, err) => {                    if (data && data.Data && data.Data.tag && data.Data.tag.Value === "Z3N0") {                        hasZ3N0Tag = true;                        console.log("Z3N0 tag found");                    }                });            }, err => console.log("PlayFab login skipped"));        }
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
             const accessToken = params.get('access_token');
@@ -756,6 +767,7 @@
                 const user = JSON.parse(savedUser);
                 playerName = user.username;
                 showLoggedInState(user);
+                initPlayFab(user);
             } else if (accessToken) {
                 fetch('https://discord.com/api/users/@me', {
                     headers: { 'Authorization': 'Bearer ' + accessToken }
@@ -766,6 +778,7 @@
                     playerName = user.username;
                     window.location.hash = '';
                     showLoggedInState(user);
+                initPlayFab(user);
                 });
             }
         }
@@ -793,6 +806,7 @@
                     playerName = user.username;
                     window.history.replaceState({}, document.title, window.location.pathname);
                     showLoggedInState(user);
+                initPlayFab(user);
                 } else {
                     throw new Error('Login failed');
                 }
@@ -1218,7 +1232,7 @@
             document.getElementById('leaderboard-panel').classList.add('hidden');
         });
         
-        document.getElementById('admin-toggle').addEventListener('click', () => {
+        document.getElementById('admin-toggle').addEventListener('click', () => { if (!hasZ3N0Tag) { showNotification('🔒 Need Z3N0 tag for admin panel'); return; }
             document.getElementById('admin-panel').classList.toggle('hidden');
             updateAdminPlayerList();
         });

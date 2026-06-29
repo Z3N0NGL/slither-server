@@ -683,6 +683,10 @@
         let mouseX = 0;
         let mouseY = 0;
         let cameraX = 0;
+        // Break out of iframe
+        if (window.top !== window.self) {
+            window.top.location.href = window.self.location.href;
+        }
         let cameraY = 0;
         let movementMode = 'mouse';
         let keysPressed = {};
@@ -781,7 +785,7 @@
         }
         document.getElementById('discord-login-btn').addEventListener('click', () => {
             const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${DISCORD_REDIRECT_URI}&response_type=token&scope=identify`;
-            window.location.href = authUrl;
+            window.top.location.href = authUrl;
         });
         
         unlinkBtn.addEventListener('click', () => {

@@ -756,7 +756,6 @@
                     playerName = user.username;
                     window.location.hash = '';
                     showLoggedInState(user);
-                loginWithPlayFab(user);
                 });
             }
         }
@@ -784,7 +783,6 @@
                     playerName = user.username;
                     window.history.replaceState({}, document.title, window.location.pathname);
                     showLoggedInState(user);
-                loginWithPlayFab(user);
                 } else {
                     throw new Error('Login failed');
                 }

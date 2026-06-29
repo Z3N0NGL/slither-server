@@ -126,7 +126,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/playfab-web-sdk@2.131.240924/PlayFabClientApi.js"></script>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script>
         // ==================== CONFIG ====================
@@ -228,21 +227,6 @@
             }
         }
 
-        function waitForPlayFab() {
-            return new Promise((resolve, reject) => {
-                if (typeof PlayFabClientAPI !== "undefined") return resolve();
-                let attempts = 0;
-                const interval = setInterval(() => {
-                    if (typeof PlayFabClientAPI !== "undefined") {
-                        clearInterval(interval);
-                        resolve();
-                    } else if (++attempts >= 20) {
-                        clearInterval(interval);
-                        reject(new Error("PlayFab SDK not loaded"));
-                    }
-                }, 500);
-            });
-        }
 
         // ==================== SERVER ====================
         function connectServer() {
@@ -467,14 +451,14 @@
             const tag = btn.dataset.tag;
             const color = document.getElementById(`tag-${tag.toLowerCase()}`).value;
             socket?.emit('updateTag', { tag, tagColor: color });
-            if (playfabReady) PlayFabClientAPI.UpdateUserData({ Data: { tag, tagColor: color } }, () => {});
+                            if (playfabReady) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
         }));
         document.getElementById('apply-custom').addEventListener('click', () => {
             const tag = document.getElementById('custom-tag').value;
             const color = document.getElementById('custom-color').value;
             if (tag) {
                 socket?.emit('updateTag', { tag, tagColor: color });
-                if (playfabReady) PlayFabClientAPI.UpdateUserData({ Data: { tag, tagColor: color } }, () => {});
+                            if (playfabReady) { fetch("https://" + PLAYFAB_TITLE + ".playfabapi.com/Client/UpdateUserData", { method: "POST", headers: { "Content-Type": "application/json", "X-Authorization": sessionTicket }, body: JSON.stringify({ Data: { tag: tag, tagColor: color } }) }); }
             }
         });
 

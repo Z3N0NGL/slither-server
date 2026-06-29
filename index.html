@@ -211,18 +211,18 @@
 
         // ==================== PLAYFAB ====================
         function initPlayFab(user) {
-            if (typeof PlayFab === 'undefined') return;
-            PlayFab.settings.titleId = PLAYFAB_TITLE;
-            PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {
-                playfabReady = true;
-                // Check for Z3N0 tag in user data
-                PlayFabClientAPI.GetUserData({ Keys: ['tag'] }, (data, err) => {
-                    if (data && data.Data && data.Data.tag && data.Data.tag.Value === 'Z3N0') {
-                        hasZ3N0 = true;
-                        console.log('Z3N0 tag confirmed');
-                    }
+            try {
+                if (typeof PlayFab === "undefined" || !PlayFabClientAPI) return;
+                PlayFab.settings.titleId = PLAYFAB_TITLE;
+                PlayFabClientAPI.LoginWithCustomID({ CustomId: user.id, CreateAccount: true }, result => {
+                    playfabReady = true;
+                    PlayFabClientAPI.GetUserData({ Keys: ["tag"] }, (data, err) => {
+                        if (data && data.Data && data.Data.tag && data.Data.tag.Value === "Z3N0") {
+                            hasZ3N0 = true;
+                        }
+                    });
                 });
-            }, err => console.log('PlayFab login skipped'));
+            } catch(e) { console.log("PlayFab init failed, continuing without it"); }
         }
 
         // ==================== SERVER ====================
